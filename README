@@ -1,0 +1,3 @@
+== Virtual Host Service
+
+Worker that listen to an amqp queue and create virtual hosts in an webserver config (apache/nginx)
