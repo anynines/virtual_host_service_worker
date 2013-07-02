@@ -1,9 +1,0 @@
-# Logfile created on 2013-06-26 15:20:52 +0200 by logger.rb/31641
-2013-06-26 15:20:52.864138 virtual_host_service_worker(23427) [INFO] [daemon-kit]: DaemonKit (0.2.1) booting in development mode
-2013-06-26 15:20:52.864240 virtual_host_service_worker(23427) [INFO] [daemon-kit]: Setting up trap for USR1
-2013-06-26 15:20:52.864315 virtual_host_service_worker(23427) [INFO] [daemon-kit]: Setting up trap for USR2
-2013-06-26 15:20:52.864383 virtual_host_service_worker(23427) [INFO] [daemon-kit]: Setting up trap for HUP
-2013-06-26 15:20:52.864450 virtual_host_service_worker(23427) [INFO] [daemon-kit]: Setting up trap for INT
-2013-06-26 15:20:52.864512 virtual_host_service_worker(23427) [INFO] [daemon-kit]: Setting up trap for TERM
-2013-06-26 15:20:52.866908 virtual_host_service_worker(23427) [INFO] [daemon-kit]: DaemonKit (0.2.1) booted, now running virtual_host_service_worker
-2013-06-26 15:20:52.913287 virtual_host_service_worker(23427) [DEBUG] [daemon-kit]: AMQP.start({:user=>"guest", :pass=>"guest", :host=>"localhost", :vhost=>"/"})
