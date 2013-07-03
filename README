@@ -1,3 +1,38 @@
 == Virtual Host Service
 
-Worker that listen to an amqp queue and creates virtual hosts in an webserver config (nginx)
+Worker that listen to an amqp queue and creates virtual hosts in an webserver config (nginx). The main purpose to add virtual hosts to
+a webserver is to setup ssl certificates via an api. To setup a load-balancing it is necessary to setup multiple webservers. For that
+reason the worker is connected via an amqp queue to the api so that more worker installed on several webservers can listen to the api
+and perform the config changes for the webservers.
+
+The API is the counter part of the worker. It writes the jobs into the amqp queue. The code for the API can be found in the following repo:
+
+https://github.com/avarteqgmbh/virtual_host_service_api
+
+=== AMQP payload
+
+The payload containing the information about the virtual host is a json hash serialized as a string. In general these information will be pushed
+by the api (see above). It should have the following fields:
+
+server_name: The name of the server e.g "example.de".
+server_aliases: (optional) A comma separated list of server alias names e.g. "www.example.de,blog.example.de,www.blog.example.de".
+ssl_certificate: A certificate certificated by the certificated authority.
+ssl_ca_certificate: The ssl certificate of the certificated authority.
+ssl_key: The private key of the ssl certificate.
+
+=== Setup
+
+Add your configs to the amqp.yml: See the amqp.yml.example file to connect to the amqp service (i.g. rabbitMQ). The configs made here should be
+the sames as for the API.
+
+Add configs to the application.yml:
+
+* amqp_channel: The name of the amqp channel this should be the same for each worker and the for the api.
+* queue_id: The queue connected to the worker. Each worker must have its own queue so this option should be differ for each worker.
+* cert_dir: The directory where all certificates should save to.
+* v_host_config_dir: The directory where all configs for the webserver should save to (e.g. /etc/nginx/sites-available for nginx).
+* webserver_config: The webserver configuration file (e.g. /etc/nginx/nginx.conf for nginx).
+* routers: All reqeust to the virtual hosts will be passed to these hosts.
+
+
+

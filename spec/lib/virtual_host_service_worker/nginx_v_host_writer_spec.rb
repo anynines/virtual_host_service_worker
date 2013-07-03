@@ -88,7 +88,6 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
         File.open(APP_CONFIG['webserver_config'], 'w') do |f|
           f.write(APP_CONFIG['webserver_config'] + 'syntaxerror')
         end
-        
       end
       
       it 'should be true' do
