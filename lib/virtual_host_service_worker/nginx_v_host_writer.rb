@@ -63,7 +63,7 @@ module VirtualHostServiceWorker
     end
     
     def self.reload_config
-      #TODO: `/etc/init.d/nginx reload`
+      `nginx -s reload`
     end
   end
 end
