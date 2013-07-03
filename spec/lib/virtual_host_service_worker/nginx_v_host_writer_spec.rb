@@ -18,12 +18,28 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
     }
   end
   
+  let :valid_nginx_config do
+    <<-end_of_config
+    error_log  logs/error.log;
+    pid        logs/nginx.pid;
+    worker_rlimit_nofile 8192;
+     
+    events {
+      worker_connections  4096;
+    }
+    
+    http {
+      index    index.html index.htm index.php;
+    }
+    end_of_config
+  end
+  
   describe '.setup_v_host' do
     
     before :each do
-      `rm -f #{APP_CONFIG['cert_dir']}/example.de.pem`
-      `rm -f #{APP_CONFIG['cert_dir']}/example.de.key`
-      `rm -f #{APP_CONFIG['v_host_config_dir']}/example.de.conf`
+      `rm -f #{APP_CONFIG['cert_dir']}example.de.pem`
+      `rm -f #{APP_CONFIG['cert_dir']}example.de.key`
+      `rm -f #{APP_CONFIG['v_host_config_dir']}example.de.conf`
     end
     
     context 'with valid payload' do
@@ -44,6 +60,44 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       end
       
     end
+  end
+  
+  describe '.config_valid?' do
+    context 'with a valid config file' do
+      
+      before :each do
+        APP_CONFIG['webserver_config'] = "#{APP_CONFIG['v_host_config_dir']}valid_nginx.conf"
+        
+        File.open(APP_CONFIG['webserver_config'], 'w') do |f|
+          f.write(valid_nginx_config)
+        end
+        
+      end
+      
+      it 'should be true' do
+        VirtualHostServiceWorker::NginxVHostWriter.config_valid?.should be true
+      end
+      
+    end
+    
+    context 'with an invalid config file' do
+      
+      before :each do
+        APP_CONFIG['webserver_config'] = "#{APP_CONFIG['v_host_config_dir']}invalid_nginx.conf"
+        
+        File.open(APP_CONFIG['webserver_config'], 'w') do |f|
+          f.write(APP_CONFIG['webserver_config'] + 'syntaxerror')
+        end
+        
+      end
+      
+      it 'should be true' do
+        puts APP_CONFIG['webserver_conf']
+        VirtualHostServiceWorker::NginxVHostWriter.config_valid?.should be false
+      end
+      
+    end
+    
   end
   
 end

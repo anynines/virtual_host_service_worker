@@ -3,8 +3,8 @@ server {
    server_name  <%= server_name %> <%= server_aliases %>;
 
    ssl                  on;
-   ssl_certificate      /etc/nginx/ssl/<%= server_name %>.pem;
-   ssl_certificate_key  /etc/nginx/ssl/<%= server_name %>.key;
+   ssl_certificate      <%= "#{path_to_ssl_files}#{server_name}.pem" %>;
+   ssl_certificate_key  <%= "#{path_to_ssl_files}#{server_name}.key" %>;
 
    location / {
        proxy_set_header X-Forwarded-Host $host;

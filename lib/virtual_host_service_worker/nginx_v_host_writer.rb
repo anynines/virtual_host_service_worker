@@ -16,7 +16,11 @@ module VirtualHostServiceWorker
       
       write_webserver_config(payload['server_name'], payload['server_aliases'])
       
-      reload_config
+      if config_valid?
+        reload_config
+      else
+        # airbreak
+      end
     end
     
     protected
@@ -34,7 +38,8 @@ module VirtualHostServiceWorker
       v_host_config = template.result({
         :server_name => server_name,
         :routers => APP_CONFIG['routers'],
-        :server_aliases => server_aliases
+        :server_aliases => server_aliases,
+        :path_to_ssl_files => APP_CONFIG['cert_dir']
       })
       
       File.open(v_host_file, 'w') do |f|
@@ -64,6 +69,11 @@ module VirtualHostServiceWorker
     
     def self.reload_config
       `nginx -s reload`
+    end
+    
+    def self.config_valid?
+      out = `sudo nginx -t -c #{APP_CONFIG['webserver_config']} && echo "nginx config is valid!!"`
+      out.include?("nginx config is valid!!")
     end
   end
 end
