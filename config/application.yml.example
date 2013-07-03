@@ -1,0 +1,5 @@
+amqp_channel:       'virtual_host_jobs'
+queue_id:           'worker_1'
+cert_dir:           '/etc/nginx/ssl/'
+v_host_config_dir:  '/etc/nginx/ssl/'
+routers:            []
