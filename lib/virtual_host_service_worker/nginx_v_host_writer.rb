@@ -4,6 +4,9 @@ module VirtualHostServiceWorker
   class NginxVHostWriter < VHostWriter
     
     def self.setup_v_host(payload)
+      
+      payload['server_name'] = payload['server_name'].downcase
+      
       write_bundled_certificates(payload['server_name'],
                                  payload['ssl_ca_certificate'],
                                  payload['ssl_certificate'])

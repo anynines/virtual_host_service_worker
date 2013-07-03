@@ -15,5 +15,6 @@ gem 'erubis'
 
 group :development, :test do
   gem 'rake'
-  gem 'rspec' 
+  gem 'rspec'
+  gem 'mocha'
 end
