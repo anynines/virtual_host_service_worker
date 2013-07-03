@@ -1,2 +1,4 @@
-# Your starting point for daemon specific classes. This directory is
-# already included in your load path, so no need to specify it.
+module VirtualHostServiceWorker
+  autoload :VHostWriter, 'virtual_host_service_worker/v_host_writer.rb'
+  autoload :NginxVHostWriter, 'virtual_host_service_worker/nginx_v_host_writer.rb'
+end

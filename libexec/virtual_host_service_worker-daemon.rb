@@ -1,22 +1,14 @@
-# Generated amqp daemon
+require 'json'
 
-# Do your post daemonization configuration here
-# At minimum you need just the first line (without the block), or a lot
-# of strange things might start happening...
 DaemonKit::Application.running! do |config|
-  # Trap signals with blocks or procs
-  # config.trap( 'INT' ) do
-  #   # do something clever
-  # end
-  # config.trap( 'TERM', Proc.new { puts 'Going down' } )
+
 end
 
 DaemonKit::AMQP.run do |connection|
   channel  = AMQP::Channel.new(connection)
-  exchange = channel.fanout('virtual_host_jobs')
+  exchange = channel.fanout(APP_CONFIG['amqp_channel'])
 	
-  channel.queue("worker1").bind(exchange).subscribe do |payload|
-    puts payload
-    puts "--"
+  channel.queue(APP_CONFIG['queue_id']).bind(exchange).subscribe do |payload|
+    VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(JSON.parse(payload))
   end
 end

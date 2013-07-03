@@ -18,6 +18,7 @@ GEM
       safely (>= 0.3.1)
       thor
     diff-lcs (1.2.4)
+    erubis (2.7.0)
     eventmachine (1.0.3)
     i18n (0.6.4)
     multi_json (1.7.7)
@@ -41,6 +42,7 @@ PLATFORMS
 DEPENDENCIES
   amqp
   daemon-kit
+  erubis
   rake
   rspec
   safely

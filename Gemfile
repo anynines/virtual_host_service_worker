@@ -8,14 +8,11 @@
 
 source :gemcutter
 
-# daemon-kit
 gem 'daemon-kit'
-
-# safely (http://github.com/kennethkalmer/safely)
 gem 'safely'
-# gem 'toadhopper' # For reporting exceptions to hoptoad
-# gem 'mail' # For reporting exceptions via mail
 gem 'amqp'
+gem 'erubis'
+
 group :development, :test do
   gem 'rake'
   gem 'rspec' 
