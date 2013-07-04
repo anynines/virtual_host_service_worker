@@ -1,5 +1,30 @@
-amqp_channel:       'virtual_host_jobs'
-queue_id:           'worker_1'
-cert_dir:           '/etc/nginx/ssl/'
-v_host_config_dir:  '/etc/nginx/ssl/'
-routers:            []
+production:
+  amqp_channel:       ''
+  queue_id:           ''
+  cert_dir:           ''
+  v_host_config_dir:  ''
+  webserver_config:   ''
+  shared_config:      ''
+  upstream_config:    ''
+  nginx_command:      ''
+  routers:            []
+development:
+  amqp_channel:       ''
+  queue_id:           ''
+  cert_dir:           ''
+  v_host_config_dir:  ''
+  webserver_config:   ''
+  shared_config:      ''
+  upstream_config:    ''
+  nginx_command:      ''
+  routers:            []
+test:
+  amqp_channel:       ''
+  queue_id:           ''
+  cert_dir:           ''
+  v_host_config_dir:  ''
+  webserver_config:   ''
+  shared_config:      ''
+  upstream_config:    ''
+  nginx_command:      ''
+  routers:            []
