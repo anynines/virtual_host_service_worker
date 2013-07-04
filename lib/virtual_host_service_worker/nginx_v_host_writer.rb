@@ -7,12 +7,11 @@ module VirtualHostServiceWorker
   # Public interface:
   #   self.setup_v_hos
   #   self.write_shared_webserver_config_files
-  #     
   #
   class NginxVHostWriter < VHostWriter
     
     ##
-    # Adds a new virtual hosts to the config.
+    # Adds a new virtual hosts to the nginx config.
     #
     def self.setup_v_host(payload)
       
@@ -27,11 +26,9 @@ module VirtualHostServiceWorker
       
       write_webserver_config(payload['server_name'], payload['server_aliases'])
       
-      if config_valid?
-        reload_config
-      else
-        # airbreak
-      end
+      
+      reload_config if config_valid?
+      
     end
     
     ##
@@ -102,7 +99,6 @@ module VirtualHostServiceWorker
         f.write("\n")
         f.write(ca_cert)
       end
-      
     end
     
     def self.reload_config
@@ -110,9 +106,15 @@ module VirtualHostServiceWorker
     end
     
     def self.config_valid?
-      # see rh-web-server-service
-      out = `sudo nginx -t -c #{APP_CONFIG['webserver_config']} && echo "nginx config is valid!!"`
-      out.include?("nginx config is valid!!")
+      command = "sudo nginx -t -c #{APP_CONFIG['webserver_config']}"
+      stdout = `#{command} 2>&1`
+      
+      if $?.exitstatus == 0
+        return true
+      else
+        raise 'Invalid nginx configuration'
+      end
+      
     end
     
   end

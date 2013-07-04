@@ -90,9 +90,8 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
         end
       end
       
-      it 'should be true' do
-        puts APP_CONFIG['webserver_conf']
-        VirtualHostServiceWorker::NginxVHostWriter.config_valid?.should be false
+      it 'should raise Exception' do
+        expect{VirtualHostServiceWorker::NginxVHostWriter.config_valid?}.to raise_error
       end
       
     end
