@@ -1,8 +1,19 @@
 require 'erubis'
 
 module VirtualHostServiceWorker
+  
+  ##
+  # This class provides methods to add virtual hosts to an nginx configuration.
+  # Public interface:
+  #   self.setup_v_hos
+  #   self.write_shared_webserver_config_files
+  #     
+  #
   class NginxVHostWriter < VHostWriter
     
+    ##
+    # Adds a new virtual hosts to the config.
+    #
     def self.setup_v_host(payload)
       
       payload['server_name'] = payload['server_name'].downcase
@@ -21,6 +32,34 @@ module VirtualHostServiceWorker
       else
         # airbreak
       end
+    end
+    
+    ##
+    # Writes the common cofig files which are shared by all virtual hosts.
+    # If the files already exists they would be overridden so that the values form
+    # the config/application.yml will be applied. This methods should be called on
+    # every deamon start/restart.
+    #
+    def self.write_shared_webserver_config_files
+      shared_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_shared.conf.erb')
+      shared_template = Erubis::Eruby.new(File.read(shared_template_file))
+      
+      shared_config_file = File.join(APP_CONFIG['shared_config'].split('/'))
+      File.open(shared_config_file, 'w') do |f|
+        f.write(shared_template.result)
+      end
+      
+      upstream_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_cf_routers.conf.erb')
+      upstream_template = Erubis::Eruby.new(File.read(upstream_template_file))
+      
+      upstream_config_file = File.join(APP_CONFIG['upstream_config'].split('/'))
+      File.open(upstream_config_file, 'w') do |f|
+        f.write(upstream_template.result({
+          :routers => APP_CONFIG['routers']
+        }))
+      end
+      
+      reload_config if config_valid?
     end
     
     protected
@@ -64,28 +103,6 @@ module VirtualHostServiceWorker
         f.write(ca_cert)
       end
       
-    end
-    
-    def self.write_shared_webserver_config_files
-      shared_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_shared.conf.erb')
-      shared_template = Erubis::Eruby.new(File.read(shared_template_file))
-      
-      shared_config_file = File.join(APP_CONFIG['shared_config'].split('/'))
-      File.open(shared_config_file, 'w') do |f|
-        f.write(shared_template.result)
-      end
-      
-      upstream_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_cf_routers.conf.erb')
-      upstream_template = Erubis::Eruby.new(File.read(upstream_template_file))
-      
-      upstream_config_file = File.join(APP_CONFIG['upstream_config'].split('/'))
-      File.open(upstream_config_file, 'w') do |f|
-        f.write(upstream_template.result({
-          :routers => APP_CONFIG['routers']
-        }))
-      end
-      
-      reload_config if config_valid?
     end
     
     def self.reload_config
