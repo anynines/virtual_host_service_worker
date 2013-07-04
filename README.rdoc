@@ -9,16 +9,21 @@ The API is the counter part of the worker. It writes the jobs into the amqp queu
 
 https://github.com/avarteqgmbh/virtual_host_service_api
 
-=== AMQP payload
+=== AMQP payload to add a new virtual host
 
 The payload containing the information about the virtual host is a json hash serialized as a string. In general these information will be pushed
 by the api (see above). It should have the following fields:
 
-* server_name: The name of the server e.g "example.de".
+* server_name: The name of the virtual host e.g "example.de".
 * server_aliases: (optional) A comma separated list of server alias names e.g. "www.example.de,blog.example.de,www.blog.example.de".
 * ssl_certificate: A certificate certificated by the certificated authority.
 * ssl_ca_certificate: The ssl certificate of the certificated authority.
 * ssl_key: The private key of the ssl certificate.
+
+=== AMQP payload to remove a virtual host
+
+* action: to remove a vhost this must be 'delete'.
+* server_name: The name of the virtual host e.g "example.de".
 
 === Setup
 
@@ -32,7 +37,11 @@ Add configs to the application.yml:
 * cert_dir: The directory where all certificate files should save to.
 * v_host_config_dir: The directory where all configs for the webserver should save to (e.g. /etc/nginx/sites-available for nginx).
 * webserver_config: The webserver configuration file (e.g. /etc/nginx/nginx.conf for nginx).
-* routers: All reqeust to the virtual hosts will be passed to these hosts.
+* shared_config: A config file which will be included in each virtual host configuration. This file don't needs to be exists since it will be
+  created/overridden on each daemon start/restart.
+* upstream_config: A config file for nginx which contains an upstream passed to the proxy_pass option. This file don't needs to be exists since it will be
+  created/overridden on each daemon start/restart. 
+* routers: An array of hosts. These hosts will be written in the upstream_config file.
 
 
 
