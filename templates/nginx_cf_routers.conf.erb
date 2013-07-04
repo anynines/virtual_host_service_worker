@@ -1,0 +1,5 @@
+upstream cf-routers {
+    <% routers.each do |router| -%>
+    server <%= router %>;
+    <% end %>
+}

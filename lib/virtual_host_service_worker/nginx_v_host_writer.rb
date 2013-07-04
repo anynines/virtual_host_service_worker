@@ -27,7 +27,7 @@ module VirtualHostServiceWorker
     
     def self.write_webserver_config(server_name, server_aliases)
       
-      template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_v_host.erb')
+      template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_v_host.conf.erb')
       template = Erubis::Eruby.new(File.read(template_file))
       
       server_aliases ||= ''
@@ -37,7 +37,6 @@ module VirtualHostServiceWorker
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name}.conf")
       v_host_config = template.result({
         :server_name => server_name,
-        :routers => APP_CONFIG['routers'],
         :server_aliases => server_aliases,
         :path_to_ssl_files => APP_CONFIG['cert_dir']
       })
@@ -67,13 +66,37 @@ module VirtualHostServiceWorker
       
     end
     
+    def self.write_shared_webserver_config_files
+      shared_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_shared.conf.erb')
+      shared_template = Erubis::Eruby.new(File.read(shared_template_file))
+      
+      shared_config_file = File.join(APP_CONFIG['shared_config'].split('/'))
+      File.open(shared_config_file, 'w') do |f|
+        f.write(shared_template.result)
+      end
+      
+      upstream_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_cf_routers.conf.erb')
+      upstream_template = Erubis::Eruby.new(File.read(upstream_template_file))
+      
+      upstream_config_file = File.join(APP_CONFIG['upstream_config'].split('/'))
+      File.open(upstream_config_file, 'w') do |f|
+        f.write(upstream_template.result({
+          :routers => APP_CONFIG['routers']
+        }))
+      end
+      
+      reload_config if config_valid?
+    end
+    
     def self.reload_config
-      `nginx -s reload`
+      `sudo nginx -s reload`
     end
     
     def self.config_valid?
+      # see rh-web-server-service
       out = `sudo nginx -t -c #{APP_CONFIG['webserver_config']} && echo "nginx config is valid!!"`
       out.include?("nginx config is valid!!")
     end
+    
   end
 end
