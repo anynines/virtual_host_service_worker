@@ -11,10 +11,17 @@ module VirtualHostServiceWorker
   class NginxVHostWriter < VHostWriter
     
     ##
-    # Adds a new virtual hosts to the nginx config.
+    # Adds a new virtual hosts configured with a ssl certificate to the nginx config.
+    # The virtual host information is passad as hash to the method. The hash must contain the
+    # following keys:
+    # server_name: The name of the virtual host (the domain that should be protected by the certificate)
+    # server_aliases: (optional) In case the certificate is a wildcard certificate some subdomains could
+    #   be specified by this key (as comma separated list).
+    # ssl_ca_certificate: The certificate of the certification authority.
+    # ssl_certificate: The certificate belonging to the domain (server_name).
+    # ssl_key: The private key for the ssl certificate
     #
     def self.setup_v_host(payload)
-      
       payload['server_name'] = payload['server_name'].downcase
       payload['server_aliases'] = payload['server_aliases'].downcase if payload['server_aliases']
       
@@ -26,9 +33,7 @@ module VirtualHostServiceWorker
       
       write_webserver_config(payload['server_name'], payload['server_aliases'])
       
-      
-      reload_config if config_valid?
-      
+      reload_config
     end
     
     ##
@@ -56,11 +61,14 @@ module VirtualHostServiceWorker
         }))
       end
       
-      reload_config if config_valid?
+      reload_config
     end
     
     protected
     
+    ##
+    # Write the actual virtual host configuration pointing to the certificate fiels. 
+    #
     def self.write_webserver_config(server_name, server_aliases)
       
       template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_v_host.conf.erb')
@@ -83,6 +91,9 @@ module VirtualHostServiceWorker
       
     end
     
+    ##
+    # Wirte the ssl key file to directory specified by the application config (config/application.yml).
+    #
     def self.write_ssl_key(server_name, key)
       pem_file = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
       
@@ -91,6 +102,10 @@ module VirtualHostServiceWorker
       end
     end
     
+    ##
+    # Bundles the ca certificate and the ssl certificate into one pem file and write it into the
+    # directory specified by the application config (config/application.yml).
+    #
     def self.write_bundled_certificates(server_name, ca_cert, cert)
       pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name}.pem")
       
@@ -101,20 +116,23 @@ module VirtualHostServiceWorker
       end
     end
     
+    ##
+    # Couses nginx to realod the created configuration.
+    #
     def self.reload_config
-      `sudo nginx -s reload`
+      `sudo #{APP_CONFIG['nginx_command']} -s reload` if config_valid?
     end
     
+    ##
+    # Checks if the created nginx cofiguration is valid.
+    #
     def self.config_valid?
-      command = "sudo nginx -t -c #{APP_CONFIG['webserver_config']}"
+      command = "sudo #{APP_CONFIG['nginx_command']} -t -c #{APP_CONFIG['webserver_config']}"
       stdout = `#{command} 2>&1`
       
-      if $?.exitstatus == 0
-        return true
-      else
-        raise 'Invalid nginx configuration'
-      end
+      raise 'Invalid nginx configuration' unless $?.exitstatus == 0
       
+      return true
     end
     
   end
