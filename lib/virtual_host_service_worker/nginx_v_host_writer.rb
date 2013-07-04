@@ -12,7 +12,7 @@ module VirtualHostServiceWorker
     
     ##
     # Adds a new virtual hosts configured with a ssl certificate to the nginx config.
-    # The virtual host information is passad as hash to the method. The hash must contain the
+    # The virtual host information is passed as hash to the method. The hash must contain the
     # following keys:
     # server_name: The name of the virtual host (the domain that should be protected by the certificate)
     # server_aliases: (optional) In case the certificate is a wildcard certificate some subdomains could
@@ -32,6 +32,21 @@ module VirtualHostServiceWorker
       write_ssl_key(payload['server_name'], payload['ssl_key'])
       
       write_webserver_config(payload['server_name'], payload['server_aliases'])
+      
+      reload_config
+    end
+    
+    ##
+    # Deletes the ssl certificates and the nginx config from a virutal host.
+    #
+    def self.delete_v_host(server_name)
+      v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name}.conf")
+      key_file    = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
+      pem_file    = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name}.pem")
+      
+      execute_command("sudo rm -f #{v_host_file}")
+      execute_command("sudo rm -f #{key_file}")
+      execute_command("sudo rm -f #{pem_file}")
       
       reload_config
     end
@@ -95,9 +110,9 @@ module VirtualHostServiceWorker
     # Wirte the ssl key file to directory specified by the application config (config/application.yml).
     #
     def self.write_ssl_key(server_name, key)
-      pem_file = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
+      key_file = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
       
-      File.open(pem_file, 'w') do |f|
+      File.open(key_file, 'w') do |f|
         f.write(key)
       end
     end
@@ -120,19 +135,15 @@ module VirtualHostServiceWorker
     # Couses nginx to realod the created configuration.
     #
     def self.reload_config
-      `sudo #{APP_CONFIG['nginx_command']} -s reload` if config_valid?
+      execute_command("sudo #{APP_CONFIG['nginx_command']} -s reload") if config_valid?
     end
     
     ##
     # Checks if the created nginx cofiguration is valid.
     #
     def self.config_valid?
-      command = "sudo #{APP_CONFIG['nginx_command']} -t -c #{APP_CONFIG['webserver_config']}"
-      stdout = `#{command} 2>&1`
-      
-      raise 'Invalid nginx configuration' unless $?.exitstatus == 0
-      
-      return true
+      command = "sudo #{APP_CONFIG['nginx_command']} -t -c #{APP_CONFIG['webserver_config']}"  
+      execute_command(command, 'Invalid nginx configuration')
     end
     
   end

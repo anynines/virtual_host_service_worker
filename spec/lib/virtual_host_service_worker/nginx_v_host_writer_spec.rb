@@ -59,7 +59,44 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
         File.exists?("#{APP_CONFIG['cert_dir']}/example.de.pem").should be true
       end
       
+      it 'should reload the nginx configuration' do
+        VirtualHostServiceWorker::NginxVHostWriter.expects(:reload_config).once
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+      end
+      
     end
+  end
+  
+  describe '.delete_v_host' do
+  
+    context 'with a existing virtual host' do
+      
+      before :each do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+      end
+      
+      it 'should delete the vhost config file' do
+        VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
+        File.exists?("#{APP_CONFIG['v_host_config_dir']}/example.de.conf").should be false
+      end
+      
+      it 'should delete the ssl key file' do
+        VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
+        File.exists?("#{APP_CONFIG['cert_dir']}/example.de.key").should be false
+      end
+      
+      it 'should delete the pem file' do
+        VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
+        File.exists?("#{APP_CONFIG['cert_dir']}/example.de.pem").should be false
+      end
+      
+      it 'should reload the nginx configuration' do
+        VirtualHostServiceWorker::NginxVHostWriter.expects(:reload_config).once
+        VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
+      end
+    
+    end
+    
   end
   
   describe '.config_valid?' do
