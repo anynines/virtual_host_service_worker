@@ -93,7 +93,7 @@ module VirtualHostServiceWorker
       server_aliases = server_aliases.gsub(',', ' ')
       
       
-      v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name}.conf")
+      v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
       v_host_config = template.result({
         :server_name => server_name,
         :server_aliases => server_aliases,
@@ -110,7 +110,7 @@ module VirtualHostServiceWorker
     # Wirte the ssl key file to directory specified by the application config (config/application.yml).
     #
     def self.write_ssl_key(server_name, key)
-      key_file = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
+      key_file = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name.gsub('*', 'wild')}.key")
       
       File.open(key_file, 'w') do |f|
         f.write(key)
@@ -122,7 +122,7 @@ module VirtualHostServiceWorker
     # directory specified by the application config (config/application.yml).
     #
     def self.write_bundled_certificates(server_name, ca_cert, cert)
-      pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name}.pem")
+      pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.pem")
       
       File.open(pem_file, 'w') do |f|
         f.write(cert)

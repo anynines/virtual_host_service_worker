@@ -3,7 +3,7 @@ module VirtualHostServiceWorker
   class AmqpDispatcher
     
     ##
-    # dispatches amqp-messages to methods calls
+    # dispatches amqp-messages to method calls
     #
     def self.dispatch(payload)
       if payload['ssl_certificate'] and payload['ssl_ca_certificate'] and payload['ssl_key']
