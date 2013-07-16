@@ -13,6 +13,9 @@ gem 'safely'
 gem 'amqp'
 gem 'erubis'
 
+gem 'capistrano'
+gem 'capistrano-ext'
+
 group :development, :test do
   gem 'rake'
   gem 'rspec'
