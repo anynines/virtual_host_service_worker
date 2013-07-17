@@ -135,14 +135,14 @@ module VirtualHostServiceWorker
     # Couses nginx to realod the created configuration.
     #
     def self.reload_config
-      execute_command("sudo #{APP_CONFIG['nginx_command']} -s reload") if config_valid?
+      execute_command("#{APP_CONFIG['nginx_command']} -s reload") if config_valid?
     end
     
     ##
     # Checks if the created nginx cofiguration is valid.
     #
     def self.config_valid?
-      command = "sudo #{APP_CONFIG['nginx_command']} -t -c #{APP_CONFIG['webserver_config']}"  
+      command = "#{APP_CONFIG['nginx_command']} -t -c #{APP_CONFIG['webserver_config']}"  
       execute_command(command, 'Invalid nginx configuration')
     end
     
