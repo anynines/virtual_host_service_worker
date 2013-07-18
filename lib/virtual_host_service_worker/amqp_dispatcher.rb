@@ -6,6 +6,7 @@ module VirtualHostServiceWorker
     # dispatches amqp-messages to method calls
     #
     def self.dispatch(payload)
+      DaemonKit.logger.info("AMQP message received")
       if payload['ssl_certificate'] and payload['ssl_ca_certificate'] and payload['ssl_key']
         DaemonKit.logger.info("added a new vhost")
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(payload)
