@@ -44,9 +44,9 @@ module VirtualHostServiceWorker
       key_file    = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
       pem_file    = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name}.pem")
       
-      execute_command("sudo rm -f #{v_host_file}")
-      execute_command("sudo rm -f #{key_file}")
-      execute_command("sudo rm -f #{pem_file}")
+      execute_command("rm -f #{v_host_file}")
+      execute_command("rm -f #{key_file}")
+      execute_command("rm -f #{pem_file}")
       
       reload_config
     end
