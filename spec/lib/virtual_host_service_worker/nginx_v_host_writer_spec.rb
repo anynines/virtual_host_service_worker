@@ -33,7 +33,23 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       "updated_at"=>"2013-07-03T07:52:05Z"
     }
   end
-  
+
+  let :valid_payload_with_empty_ca_cert do
+    {
+      "id"=>1,
+      "ssl_certificate"=>
+      "-----BEGIN CERTIFICATE-----\nMIID1DCCAbwCAQEwDQYJKoZIhvcNAQEFBQAwgYgxCzAJBgNVBAYTAkRFMREwDwYD\nVQQIEwhTYWFybGFuZDEVMBMGA1UEBxMMU2FhcmJydWVja2VuMQ0wCwYDVQQKEwRh\ndnRxMRAwDgYDVQQLEwdob3N0aW5nMQ0wCwYDVQQDEwRvbGxpMR8wHQYJKoZIhvcN\nAQkBFhBvd29sZkBhdmFydGVxLmRlMB4XDTEzMDYyNTA3NDg1MloXDTE0MDYyNTA3\nNDg1MlowWzELMAkGA1UEBhMCREUxEzARBgNVBAgTClNvbWUtU3RhdGUxCzAJBgNV\nBAcTAnNiMQwwCgYDVQQKEwNvcmcxDTALBgNVBAsTBHVuaXQxDTALBgNVBAMTBG5h\nbWUwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJhiuU8QqHPlk+HEpcu861BH\ngVDUTOkjcqTHmWBcOafykhfCUrLe6gU1NHgA1z2vixuX87RCEqHb99wwWurCEc79\nyc+9LG2Va6khuC+X8xEH9/W0qul7E8u1OhwQVtTAVkv2AXFvhsOfUM+PN6EDdp8d\n4Fg53M9DY1PfKk0mc27hAgMBAAEwDQYJKoZIhvcNAQEFBQADggIBABbt7WxEu6A+\n+Jszqm3j7UOT0JRcCb8QVjNQlejtpjpntQrRLUWl4YbCAtGTSLAIJ8x3zB8aOEQx\nsZQ7BcVQipNgr3P3wSzCdFPGaqe5IuXq0UypmHjr854G+Dt997CIuvH1g9Qylnck\npClpswMhltvnkcjPGEGiBtH5dXyVrRklXzSDHmX4vg5dv1GVLpEnq5XrvKypN/Hq\nzuWvyd6FUuXZ6BMlrfUoa4mZTxY3FGpcoqJugKAX5GOiNLz9sNpG4X9X37QnVPKE\n0BHdkJoyTuAgaEH+/3bYNrx+VvU1mvY+M6QPr2joLLDtTro1M1+oOMyXwK99e2lS\n3K0l6S546A2Po4Kw5txMz9ETId5N3cHo1hwwirGItLSFblNWitsLG56eW+sE+NoV\nqh4F1fYl6XPcRlqel5H29a8uQWN3jWsDDnsih5PCvEEPMAJ+E+vDTNBo4bGeKHw5\nmcnrksdX9+yqwtT5uev/7PXM6IdMTB+VxW6n0fiNa/nhMApDmHvVrxSSaht7QxiY\n9T/X2Hd8SgTZAjeTbgTqxvhyAh1Y24ti6yIvUj35oZUlg5teO6W9LQOSklHgy7MH\nnenMSGo4crCtBmTLWtqxhuizKD7OEEenXOUeGCDeDDGZOOgCcw9oVk5ZErhndTqR\n7BeVZ1Q+foNw3Yl5o46J5K5AvIulzMCP\n-----END CERTIFICATE-----",
+      "ssl_ca_certificate"=>
+      nil,
+      "ssl_key"=>
+      "-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQCYYrlPEKhz5ZPhxKXLvOtQR4FQ1EzpI3Kkx5lgXDmn8pIXwlKy\n3uoFNTR4ANc9r4sbl/O0QhKh2/fcMFrqwhHO/cnPvSxtlWupIbgvl/MRB/f1tKrp\nexPLtTocEFbUwFZL9gFxb4bDn1DPjzehA3afHeBYOdzPQ2NT3ypNJnNu4QIDAQAB\nAoGBAIdsZQbQ5QNqaUvguP8g+3aytUeiBF/EcuPhxnqOO2b3+cFHnrr7w7mxGNn0\n1VQqp1N0bM4rUeeqVtHF32Z15eBRM1cR+2OA4Tg1bs91OmC0Btpq/zNPGzhQCeN7\nNEXsnzJhP7MOg8RmXGL89vDMJfjGrg3bsBGQmTezJelAK7wJAkEAx3tzafAUlWGv\nwW5a1U2eRBKGVXXUgdnvn3TLaLArhDzzLJ4+o/42p9kAo4crVWRve/IZPF+wydb1\nLyCfs72qhwJBAMOPVUKecFj9sD3gVheMsYNPtxR6P1goHQkX6GGSLF1in5hweuoq\nhOMj1OR9ZzSRi27g0enrpoCanl4L9h9FbVcCQGHPUCnTg+Qy/8ByYatQ4ZczFhb1\nLXt15p5i4BG2v7+ZOwrXlJNIZHgsWLnV3xOBqYA2ltUZfk+ZTKMM9gFlsCUCQQCK\nga0gZvkpflxiJs6zFTnwx/ficAcHWDngY+d5m78CUUS6Agh8a6r8+TbishLzv5Xi\n7SafqACgm2JJN+2VDmY3AkBefIidvB3re7rBkUa/7x0AzXE1KIqDTHsyA1+Zw/+5\nDVyMxqPfW1XvQj5Vx2naUio7gy3zg5Y+v7+LbJY2g7Cc\n-----END RSA PRIVATE KEY-----",
+      "server_name"=>"*.eXample.de",
+      "organization_guid"=>"a-valid-org-guid",
+      "created_at"=>"2013-07-03T07:52:05Z",
+      "updated_at"=>"2013-07-03T07:52:05Z"
+    }
+  end
+
   let :valid_nginx_config do
     <<-end_of_config
     error_log  logs/error.log;
@@ -80,6 +96,14 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
       end
       
+    end
+
+    context 'without a ca certificate' do
+      it 'should create the cert pem file' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_empty_ca_cert)
+        File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de.pem").should be true
+        
+      end
     end
 
     context 'with a wildcard server name' do
