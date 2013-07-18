@@ -72,6 +72,8 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       `rm -f #{APP_CONFIG['cert_dir']}example.de.pem`
       `rm -f #{APP_CONFIG['cert_dir']}example.de.key`
       `rm -f #{APP_CONFIG['v_host_config_dir']}example.de.conf`
+      `rm -f #{APP_CONFIG['v_host_link_dir']}example.de.conf` if APP_CONFIG['v_host_link_dir']
+      `rm -f #{APP_CONFIG['v_host_link_dir']}wild.example.de.conf` if APP_CONFIG['v_host_link_dir']
     end
     
     context 'with valid payload' do
@@ -94,6 +96,11 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       it 'should reload the nginx configuration' do
         VirtualHostServiceWorker::NginxVHostWriter.expects(:reload_config).once
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+      end
+
+      it 'should link the nginx configuration to the directory specified in the config' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+        File.exists?("#{APP_CONFIG['v_host_link_dir']}/example.de.conf").should be true
       end
       
     end
@@ -122,6 +129,7 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
          File.exists?("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf").should be true
       end
     end
+
   end
   
   describe '.delete_v_host' do
@@ -129,27 +137,33 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
     context 'with a existing virtual host' do
       
       before :each do
+       `rm -f #{APP_CONFIG['v_host_link_dir']}example.de.conf` if APP_CONFIG['v_host_link_dir']
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
       end
       
       it 'should delete the vhost config file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['v_host_config_dir']}/example.de.conf").should be false
+        File.exists?("#{APP_CONFIG['v_host_config_dir']}example.de.conf").should be false
       end
       
       it 'should delete the ssl key file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['cert_dir']}/example.de.key").should be false
+        File.exists?("#{APP_CONFIG['cert_dir']}example.de.key").should be false
       end
       
       it 'should delete the pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['cert_dir']}/example.de.pem").should be false
+        File.exists?("#{APP_CONFIG['cert_dir']}example.de.pem").should be false
       end
       
       it 'should reload the nginx configuration' do
         VirtualHostServiceWorker::NginxVHostWriter.expects(:reload_config).once
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
+      end
+
+      it 'should delete the config link' do
+        VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
+        File.symlink?("#{APP_CONFIG['v_host_link_dir']}example.de.conf").should be false
       end
     
     end

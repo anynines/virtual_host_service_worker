@@ -33,6 +33,8 @@ module VirtualHostServiceWorker
       
       write_webserver_config(payload['server_name'], payload['server_aliases'])
       
+      link_webserver_config(payload['server_name'])
+      
       reload_config
     end
     
@@ -41,12 +43,14 @@ module VirtualHostServiceWorker
     #
     def self.delete_v_host(server_name)
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name}.conf")
+      v_host_link = File.join(APP_CONFIG['v_host_link_dir'].split('/'), "#{server_name}.conf")
       key_file    = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
       pem_file    = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name}.pem")
       
       execute_command("rm -f #{v_host_file}")
       execute_command("rm -f #{key_file}")
       execute_command("rm -f #{pem_file}")
+      execute_command("rm -f #{v_host_link}") if APP_CONFIG['v_host_link_dir'] 
       
       reload_config
     end
@@ -104,6 +108,19 @@ module VirtualHostServiceWorker
         f.write(v_host_config)
       end
       
+    end
+
+    ##
+    # Links the webserver config created in self.write_webserver_config to an
+    # other directory spezified in the APP_CONFIG
+    # e.g.: Write the config in the sites-available directory and link it in the sites-enabled directory
+    #
+    def self.link_webserver_config(server_name)
+      return if (not APP_CONFIG['v_host_link_dir']) or APP_CONFIG['v_host_link_dir'] == ""
+
+      v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
+      v_host_link = File.join(APP_CONFIG['v_host_link_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
+      execute_command("ln -s #{v_host_file} #{v_host_link}")
     end
     
     ##
