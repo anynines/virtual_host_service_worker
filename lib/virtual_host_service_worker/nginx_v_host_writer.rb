@@ -51,6 +51,7 @@ module VirtualHostServiceWorker
       execute_command("rm -f #{v_host_file}")
       execute_command("rm -f #{key_file}")
       execute_command("rm -f #{pem_file}")
+      execute_command("rm -rf #{File.dirname(pem_file)}")
       execute_command("rm -f #{v_host_link}") if APP_CONFIG['v_host_link_dir']
       
       reload_config
