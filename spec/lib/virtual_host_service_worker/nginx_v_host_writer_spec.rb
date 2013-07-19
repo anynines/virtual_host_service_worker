@@ -85,12 +85,12 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       
       it 'should create the cert key file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.exists?("#{APP_CONFIG['cert_dir']}/example.de.key").should be true
+        File.exists?("#{APP_CONFIG['cert_dir']}/example.de/example.de.key").should be true
       end
       
       it 'should create the cert pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.exists?("#{APP_CONFIG['cert_dir']}/example.de.pem").should be true
+        File.exists?("#{APP_CONFIG['cert_dir']}/example.de/example.de.pem").should be true
       end
       
       it 'should reload the nginx configuration' do

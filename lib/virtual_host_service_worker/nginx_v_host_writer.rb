@@ -1,4 +1,5 @@
 require 'erubis'
+require 'fileutils'
 
 module VirtualHostServiceWorker
   
@@ -127,8 +128,9 @@ module VirtualHostServiceWorker
     # Wirte the ssl key file to directory specified by the application config (config/application.yml).
     #
     def self.write_ssl_key(server_name, key)
-      key_file = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name.gsub('*', 'wild')}.key")
-      
+      key_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name.gsub('*', 'wild')}.key")
+      FileUtils.mkdir_p(File.dirname(key_file))      
+
       File.open(key_file, 'w') do |f|
         f.write(key)
       end
@@ -139,8 +141,9 @@ module VirtualHostServiceWorker
     # directory specified by the application config (config/application.yml).
     #
     def self.write_bundled_certificates(server_name, ca_cert, cert)
-      pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.pem")
-      
+      pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name.gsub('*', 'wild')}.pem")
+      FileUtils.mkdir_p(File.dirname(pem_file))
+
       File.open(pem_file, 'w') do |f|
         f.write(cert)
         f.write("\n")
