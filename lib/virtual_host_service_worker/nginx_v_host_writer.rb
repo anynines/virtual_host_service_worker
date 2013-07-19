@@ -45,8 +45,8 @@ module VirtualHostServiceWorker
     def self.delete_v_host(server_name)
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name}.conf")
       v_host_link = File.join(APP_CONFIG['v_host_link_dir'].split('/'), "#{server_name}.conf") if APP_CONFIG['v_host_link_dir']
-      key_file    = File.join(APP_CONFIG['cert_dir'].split('.'), "#{server_name}.key")
-      pem_file    = File.join(APP_CONFIG['cert_dir'].split('/'), "#{server_name}.pem")
+      key_file    = File.join(APP_CONFIG['cert_dir'].split('.'), server_name.gsub('*', 'wild'), "#{server_name}.key")
+      pem_file    = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name}.pem")
       
       execute_command("rm -f #{v_host_file}")
       execute_command("rm -f #{key_file}")
