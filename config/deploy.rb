@@ -9,6 +9,7 @@ set :stages, %w(production)
 ##### Constant variables #####
 set :application, "ssl_gateway"
 set :deploy_to,   "/var/www/#{application}"
+set :use_sudo, false
 set :user, "deploy"
 
 ##### Default variables #####
