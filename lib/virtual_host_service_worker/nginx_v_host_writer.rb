@@ -153,8 +153,8 @@ module VirtualHostServiceWorker
 
       File.open(pem_file, 'w') do |f|
         f.write(cert.strip)
-        f.write("\n")
-        f.write(ca_cert.strip)
+        f.write("\n") if ca_cert
+        f.write(ca_cert.strip) if ca_cert
       end
     end
     
