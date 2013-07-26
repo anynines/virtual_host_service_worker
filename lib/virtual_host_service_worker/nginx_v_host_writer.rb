@@ -152,9 +152,9 @@ module VirtualHostServiceWorker
       FileUtils.mkdir_p(File.dirname(pem_file))
 
       File.open(pem_file, 'w') do |f|
-        f.write(cert)
+        f.write(cert.strip)
         f.write("\n")
-        f.write(ca_cert)
+        f.write(ca_cert.strip)
       end
     end
     
