@@ -105,6 +105,8 @@ module VirtualHostServiceWorker
         :server_aliases => server_aliases,
         :path_to_ssl_files => APP_CONFIG['cert_dir']
       })
+
+      FileUtils.rm(v_host_file) if File.exist?(v_host_file)
       
       File.open(v_host_file, 'w') do |f|
         f.write(v_host_config)
@@ -122,7 +124,7 @@ module VirtualHostServiceWorker
 
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
       v_host_link = File.join(APP_CONFIG['v_host_link_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
-      execute_command("ln -s #{v_host_file} #{v_host_link}")
+      execute_command("ln -s #{v_host_file} #{v_host_link}") unless File.exists?(v_host_link)
     end
     
     ##
@@ -130,6 +132,8 @@ module VirtualHostServiceWorker
     #
     def self.write_ssl_key(server_name, key)
       key_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name.gsub('*', 'wild')}.key")
+
+      FileUtils.rm(key_file) if File.exist?(key_file)      
       FileUtils.mkdir_p(File.dirname(key_file))      
 
       File.open(key_file, 'w') do |f|
@@ -143,6 +147,8 @@ module VirtualHostServiceWorker
     #
     def self.write_bundled_certificates(server_name, ca_cert, cert)
       pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name.gsub('*', 'wild')}.pem")
+      
+      FileUtils.rm(pem_file) if File.exist?(pem_file)      
       FileUtils.mkdir_p(File.dirname(pem_file))
 
       File.open(pem_file, 'w') do |f|

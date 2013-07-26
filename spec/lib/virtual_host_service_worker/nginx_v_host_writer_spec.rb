@@ -69,14 +69,14 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
   describe '.setup_v_host' do
     
     before :each do
-      `rm -f #{APP_CONFIG['cert_dir']}example.de.pem`
-      `rm -f #{APP_CONFIG['cert_dir']}example.de.key`
+      `rm -f #{APP_CONFIG['cert_dir']}example.de/example.de.pem`
+      `rm -f #{APP_CONFIG['cert_dir']}example.de/example.de.key`
       `rm -f #{APP_CONFIG['v_host_config_dir']}example.de.conf`
       `rm -f #{APP_CONFIG['v_host_link_dir']}example.de.conf` if APP_CONFIG['v_host_link_dir']
       `rm -f #{APP_CONFIG['v_host_link_dir']}wild.example.de.conf` if APP_CONFIG['v_host_link_dir']
     end
     
-    context 'with valid payload' do
+    context 'with a valid cert, ca cert and ssl key' do
       
       it 'should create the key file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
@@ -108,26 +108,57 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
     context 'without a ca certificate' do
       it 'should create the cert pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_empty_ca_cert)
-        File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de.pem").should be true
-        
+        File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.pem").should be true
       end
     end
 
     context 'with a wildcard server name' do
       it 'should replace the asterix in the certificates file name' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
-        File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de.pem").should be true
+        File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.pem").should be true
       end
 
       it 'should replace the asterix in the key file name' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
-         File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de.key").should be true
+         File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.key").should be true
       end
     
       it 'should replace the asterix in the server config file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
          File.exists?("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf").should be true
       end
+    end
+
+    context 'with a server name already existing in the webserver config' do
+
+      before :each do
+        `mkdir #{APP_CONFIG['cert_dir']}example.de`
+        `echo '#{'content_to_override'*1000}' > #{APP_CONFIG['cert_dir']}example.de/example.de.pem`
+        `echo '#{'content_to_override'*1000}' > #{APP_CONFIG['cert_dir']}example.de/example.de.key`
+        `echo '#{'content_to_override'*1000}' > #{APP_CONFIG['v_host_config_dir']}example.de.conf`
+        `echo '#{'content_to_override'*1000}' > #{APP_CONFIG['v_host_link_dir']}example.de.conf` if APP_CONFIG['v_host_link_dir']
+        `echo '#{'content_to_override'*1000}' > #{APP_CONFIG['v_host_link_dir']}wild.example.de.conf` if APP_CONFIG['v_host_link_dir']
+      end
+
+      it 'should find the existing files (the before each in the test should work :)' do
+        File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.pem").should include 'content_to_override'
+      end
+
+      it 'should replace the cert pem file' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+        File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.pem").should_not include 'content_to_override'
+      end
+
+      it 'should replace the ssl key' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+        File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.key").should_not include 'content_to_override'
+      end
+
+      it 'should replace the config file' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+        File.read("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf").should_not include 'content_to_override'
+      end
+
     end
 
   end
@@ -148,12 +179,12 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       
       it 'should delete the ssl key file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['cert_dir']}example.de.key").should be false
+        File.exists?("#{APP_CONFIG['cert_dir']}example.de/example.de.key").should be false
       end
       
       it 'should delete the pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['cert_dir']}example.de.pem").should be false
+        File.exists?("#{APP_CONFIG['cert_dir']}example.de/example.de.pem").should be false
       end
       
       it 'should reload the nginx configuration' do
