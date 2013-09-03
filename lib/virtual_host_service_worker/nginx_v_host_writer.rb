@@ -101,7 +101,7 @@ module VirtualHostServiceWorker
       
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
       v_host_config = template.result({
-        :server_name => server_name.gsub('*', 'wild'),
+        :server_name => server_name,
         :server_aliases => server_aliases,
         :path_to_ssl_files => APP_CONFIG['cert_dir'].to_s + server_name.gsub('*', 'wild') + '/'
       })

@@ -155,6 +155,13 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
         nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}wild.example.de.conf")
         nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}wild.example.de/wild.example.de.key"
       end
+
+      it 'should not replace the asterisk in the server name for the nginx server name configuration field' do
+         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
+
+        nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}wild.example.de.conf")
+        nginx_config_file_content.should include "server_name  *.example.de"
+      end
     end
 
     context 'with a server name already existing in the webserver config' do
