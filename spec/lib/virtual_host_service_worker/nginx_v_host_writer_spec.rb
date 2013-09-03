@@ -102,6 +102,20 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
         File.exists?("#{APP_CONFIG['v_host_link_dir']}/example.de.conf").should be true
       end
+
+      it 'should write the right pem certificate file path to the nginx configuration' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+
+        nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}/example.de.conf")
+        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}example.de/example.de.pem"
+      end
+
+      it 'should write the right pem certificate file path to the nginx configuration' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
+
+        nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}/example.de.conf")
+        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}example.de/example.de.key"
+      end
       
     end
 
@@ -126,6 +140,20 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       it 'should replace the asterix in the server config file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
          File.exists?("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf").should be true
+      end
+
+      it 'should write the right pem certificate file path to the nginx configuration' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
+
+        nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}wild.example.de.conf")
+        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}wild.example.de/wild.example.de.pem"
+      end
+
+      it 'should write the right pem certificate file path to the nginx configuration' do
+        VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
+
+        nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}wild.example.de.conf")
+        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}wild.example.de/wild.example.de.key"
       end
     end
 
