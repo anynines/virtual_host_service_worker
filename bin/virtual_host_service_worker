@@ -2,7 +2,6 @@
 #
 # Stub executable for virtual_host_service_worker
 #
-
 require 'honeybadger'
 
 begin
