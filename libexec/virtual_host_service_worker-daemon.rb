@@ -4,6 +4,7 @@ DaemonKit::Application.running! do |config|
 
 end
 
+
 DaemonKit::AMQP.run do |connection|
   channel  = AMQP::Channel.new(connection)
   exchange = channel.fanout(APP_CONFIG['amqp_channel'])
@@ -12,3 +13,4 @@ DaemonKit::AMQP.run do |connection|
     VirtualHostServiceWorker::AmqpDispatcher.dispatch(JSON.parse(payload))
   end
 end
+

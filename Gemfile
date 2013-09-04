@@ -15,6 +15,7 @@ gem 'erubis'
 
 gem 'capistrano'
 gem 'capistrano-ext'
+gem 'honeybadger'
 
 group :development, :test do
   gem 'rake'

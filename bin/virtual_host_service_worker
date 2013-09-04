@@ -3,7 +3,13 @@
 # Stub executable for virtual_host_service_worker
 #
 
-require File.expand_path('../../config/environment',  __FILE__)
+require 'honeybadger'
 
-DaemonKit.configuration.force_kill_wait = 5
-DaemonKit::Application.exec( DAEMON_ROOT + '/libexec/virtual_host_service_worker-daemon.rb' )
+begin
+  require File.expand_path('../../config/environment',  __FILE__)
+  DaemonKit.configuration.force_kill_wait = 5
+  DaemonKit::Application.exec( DAEMON_ROOT + '/libexec/virtual_host_service_worker-daemon.rb' )
+rescue Exception => e
+  Honeybadger.notify(e)
+  raise e
+end
