@@ -28,11 +28,11 @@ default_run_options[:pty] = true
 namespace :deploy do
 
   task :start, :roles => :app, :except => { :no_release => true } do
-    run "cd #{current_path} && DAEMON_ENV=#{env} bin/virtual_host_service_worker --pidfile #{pidfile} start"
+    run "cd #{current_path} && DAEMON_ENV=#{env} bundle exec bin/virtual_host_service_worker --pidfile #{pidfile} start"
   end
 
   task :stop, :roles => :app, :except => { :no_release => true } do
-    run "cd #{current_path} && bin/virtual_host_service_worker --pidfile #{pidfile} stop"
+    run "cd #{current_path} && DAEMON_ENV=#{env} bundle exec bin/virtual_host_service_worker --pidfile #{pidfile} stop"
   end
 
   task :restart, :roles => :app, :except => { :no_release => true } do
