@@ -7,9 +7,9 @@ end
 
 DaemonKit::AMQP.run do |connection|
   channel  = AMQP::Channel.new(connection)
-  exchange = channel.fanout(APP_CONFIG['amqp_channel'])
+  exchange = channel.fanout(APP_CONFIG['amqp_channel'], :durable => true)
 
-  channel.queue(APP_CONFIG['queue_id']).bind(exchange).subscribe do |payload|
+  channel.queue(APP_CONFIG['queue_id'], :durable => true).bind(exchange).subscribe do |payload|
     VirtualHostServiceWorker::AmqpDispatcher.dispatch(JSON.parse(payload))
   end
 end
