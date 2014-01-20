@@ -1,8 +1,10 @@
 == Virtual Host Service
 
-Worker that listen to an amqp queue and creates virtual hosts in a webserver config (nginx). The main purpose to add virtual hosts to
-a webserver is to setup ssl certificates via an api. To setup a load-balancing it is necessary to setup multiple webservers. For that
-reason the worker is connected via an amqp queue to the api so that more worker installed on several webservers can listen to the api
+Worker that listen to an amqp queue and creates virtual hosts in a webserver config (nginx). 
+
+Have a look at https://github.com/avarteqgmbh/virtual_host_service_api for a closer description what this worker does.
+
+The main purpose to add virtual hosts to a webserver is to setup ssl certificates via an api. To setup a load-balancing it is necessary to setup multiple webservers.For that reason the worker is connected via an amqp queue to the api so that more worker installed on several webservers can listen to the api
 and perform the config changes for the webservers.
 
 The API is the counter part of the worker. It writes the jobs into the amqp queue. The code for the API can be found in the following repo:

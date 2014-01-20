@@ -175,7 +175,7 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
         `echo '#{'content_to_override'*1000}' > #{APP_CONFIG['v_host_link_dir']}wild.example.de.conf` if APP_CONFIG['v_host_link_dir']
       end
 
-      it 'should find the existing files (the before each in the test should work :)' do
+      it 'should find the existing files (the before each in the test should work)' do
         File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.pem").should include 'content_to_override'
       end
 
@@ -200,6 +200,10 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
   
   describe '.delete_v_host' do
   
+    context 'with a not existing virtual host' do
+      it 'should do nothing and should not raise an exception'
+    end
+
     context 'with a existing virtual host' do
       
       before :each do
