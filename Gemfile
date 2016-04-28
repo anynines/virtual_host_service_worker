@@ -12,9 +12,6 @@ gem 'daemon-kit'
 gem 'safely'
 gem 'amqp'
 gem 'erubis'
-
-gem 'capistrano'
-gem 'capistrano-ext'
 gem 'honeybadger'
 
 group :development, :test do
