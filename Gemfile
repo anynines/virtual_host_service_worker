@@ -8,6 +8,8 @@
 
 source 'https://rubygems.org'
 
+ruby '2.2.4'
+
 gem 'daemon-kit'
 gem 'safely'
 gem 'amqp'
