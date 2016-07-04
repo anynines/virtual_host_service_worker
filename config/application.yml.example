@@ -5,8 +5,10 @@ production:
   v_host_config_dir:  '' # The directory where each vhost configuration file should be stored
   webserver_config:   '' # the main webserver configuration file path
   shared_config:      '' # the config file containting configuration which affects all vhosts - this file will be overriden by each worker restart
+  shared_config_wss:  '' #the config file containing configuration which affects all vhosts regarding websockets. - will be overridden by each worker restart
+
   upstream_config:    '' # the definition of the upstream (this contains all router ip, see below) - this file will be overriden by each worker restart
-  nginx_command:      '' # the command to execute the eginx server 
+  nginx_command:      '' # the command to execute the nginx server
   routers:            [] # all router ips wich will be written in the upstream, see above
 development:
   amqp_channel:       ''

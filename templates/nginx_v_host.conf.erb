@@ -5,7 +5,17 @@ server {
    ssl                  on;
    ssl_certificate      <%= "#{path_to_ssl_files}#{server_name.gsub('*', 'wild')}.pem" %>;
    ssl_certificate_key  <%= "#{path_to_ssl_files}#{server_name.gsub('*', 'wild')}.key" %>;
-   
+
    include <%= APP_CONFIG['shared_config'] %>;
+}
+server {
+   listen       4443;
+   server_name <%= server_name %> <%= server_aliases %>;
+
+   ssl                  on;
+   ssl_certificate      <%= "#{path_to_ssl_files}#{server_name.gsub('*', 'wild')}.pem" %>;
+   ssl_certificate_key  <%= "#{path_to_ssl_files}#{server_name.gsub('*', 'wild')}.key" %>;
+
+   include <%= APP_CONFIG['shared_config_wss'] %>;
 
 }
