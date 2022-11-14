@@ -1,7 +1,7 @@
 DAEMON_ENV = 'test' unless defined?( DAEMON_ENV )
 
 require 'rspec'
-require 'mocha/setup'
+require 'mocha'
 require 'fileutils'
 
 require File.dirname(__FILE__) + '/../config/environment'
