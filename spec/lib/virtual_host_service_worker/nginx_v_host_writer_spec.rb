@@ -80,17 +80,17 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       
       it 'should create the key file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.exists?("#{APP_CONFIG['v_host_config_dir']}/example.de.conf").should be true
+        expect(File.exists?("#{APP_CONFIG['v_host_config_dir']}/example.de.conf")).to be true
       end
       
       it 'should create the cert key file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.exists?("#{APP_CONFIG['cert_dir']}/example.de/example.de.key").should be true
+        expect(File.exists?("#{APP_CONFIG['cert_dir']}/example.de/example.de.key")).to be true
       end
       
       it 'should create the cert pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.exists?("#{APP_CONFIG['cert_dir']}/example.de/example.de.pem").should be true
+        expect(File.exists?("#{APP_CONFIG['cert_dir']}/example.de/example.de.pem")).to be true
       end
       
       it 'should reload the nginx configuration' do
@@ -100,21 +100,21 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
 
       it 'should link the nginx configuration to the directory specified in the config' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.exists?("#{APP_CONFIG['v_host_link_dir']}/example.de.conf").should be true
+        expect(File.exists?("#{APP_CONFIG['v_host_link_dir']}/example.de.conf")).to be true
       end
 
       it 'should write the right pem certificate file path to the nginx configuration' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
 
         nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}/example.de.conf")
-        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}example.de/example.de.pem"
+        expect(nginx_config_file_content).to include "#{APP_CONFIG['cert_dir']}example.de/example.de.pem"
       end
 
       it 'should write the right pem certificate file path to the nginx configuration' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
 
         nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}/example.de.conf")
-        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}example.de/example.de.key"
+        expect(nginx_config_file_content).to include "#{APP_CONFIG['cert_dir']}example.de/example.de.key"
       end
       
     end
@@ -122,45 +122,45 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
     context 'without a ca certificate' do
       it 'should create the cert pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_empty_ca_cert)
-        File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.pem").should be true
+        expect(File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.pem")).to be true
       end
     end
 
     context 'with a wildcard server name' do
       it 'should replace the asterix in the certificates file name' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
-        File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.pem").should be true
+        expect(File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.pem")).to be true
       end
 
       it 'should replace the asterix in the key file name' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
-         File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.key").should be true
+        expect(File.exists?("#{APP_CONFIG['cert_dir']}/wild.example.de/wild.example.de.key")).to be true
       end
     
       it 'should replace the asterix in the server config file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
-         File.exists?("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf").should be true
+        expect(File.exists?("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf")).to be true
       end
 
       it 'should write the right pem certificate file path to the nginx configuration' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
 
         nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}wild.example.de.conf")
-        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}wild.example.de/wild.example.de.pem"
+        expect(nginx_config_file_content).to include "#{APP_CONFIG['cert_dir']}wild.example.de/wild.example.de.pem"
       end
 
       it 'should write the right pem certificate file path to the nginx configuration' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
 
         nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}wild.example.de.conf")
-        nginx_config_file_content.should include "#{APP_CONFIG['cert_dir']}wild.example.de/wild.example.de.key"
+        expect(nginx_config_file_content).to include "#{APP_CONFIG['cert_dir']}wild.example.de/wild.example.de.key"
       end
 
       it 'should not replace the asterisk in the server name for the nginx server name configuration field' do
          VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
 
         nginx_config_file_content = File.read("#{APP_CONFIG['v_host_link_dir']}wild.example.de.conf")
-        nginx_config_file_content.should include "server_name  *.example.de"
+        expect(nginx_config_file_content).to include "server_name  *.example.de"
       end
     end
 
@@ -176,22 +176,22 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       end
 
       it 'should find the existing files (the before each in the test should work)' do
-        File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.pem").should include 'content_to_override'
+        expect(File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.pem")).to include 'content_to_override'
       end
 
       it 'should replace the cert pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.pem").should_not include 'content_to_override'
+        expect(File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.pem")).not_to include  'content_to_override'
       end
 
       it 'should replace the ssl key' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.key").should_not include 'content_to_override'
+        expect(File.read("#{APP_CONFIG['cert_dir']}example.de/example.de.key")).not_to include  'content_to_override'
       end
 
       it 'should replace the config file' do
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
-        File.read("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf").should_not include 'content_to_override'
+        expect(File.read("#{APP_CONFIG['v_host_config_dir']}/wild.example.de.conf")).not_to include  'content_to_override'
       end
 
     end
@@ -213,17 +213,17 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       
       it 'should delete the vhost config file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['v_host_config_dir']}example.de.conf").should be false
+        expect(File.exists?("#{APP_CONFIG['v_host_config_dir']}example.de.conf")).to be false
       end
       
       it 'should delete the ssl key file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['cert_dir']}example.de/example.de.key").should be false
+        expect(File.exists?("#{APP_CONFIG['cert_dir']}example.de/example.de.key")).to be false
       end
       
       it 'should delete the pem file' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.exists?("#{APP_CONFIG['cert_dir']}example.de/example.de.pem").should be false
+        expect(File.exists?("#{APP_CONFIG['cert_dir']}example.de/example.de.pem")).to be false
       end
       
       it 'should reload the nginx configuration' do
@@ -233,7 +233,7 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
 
       it 'should delete the config link' do
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
-        File.symlink?("#{APP_CONFIG['v_host_link_dir']}example.de.conf").should be false
+        expect(File.symlink?("#{APP_CONFIG['v_host_link_dir']}example.de.conf")).to be false
       end
     
     end
@@ -253,7 +253,7 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       end
       
       it 'should be true' do
-        VirtualHostServiceWorker::NginxVHostWriter.config_valid?.should be true
+        expect(VirtualHostServiceWorker::NginxVHostWriter.config_valid?).to be true
       end
       
     end

@@ -26,5 +26,6 @@ APP_CONFIG = {
 DaemonKit::Application.running!
 
 RSpec.configure do |config|
+  config.color = true
   config.mock_with :mocha
 end
