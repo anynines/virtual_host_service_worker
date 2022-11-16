@@ -201,7 +201,8 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
   describe '.delete_v_host' do
   
     context 'with a not existing virtual host' do
-      it 'should do nothing and should not raise an exception'
+      it 'should do nothing and should not raise an exception' do
+      end
     end
 
     context 'with a existing virtual host' do

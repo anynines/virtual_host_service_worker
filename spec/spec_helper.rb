@@ -21,7 +21,6 @@ APP_CONFIG = {
   "upstream_config"   => File.expand_path('../../tmp/upstream_config', __FILE__),
   "nginx_command"     => File.expand_path('../../spec/support/nginx_dummy', __FILE__),
   "routers"           => [],
-  "use_ha_proxy"      => true
 }
 
 DaemonKit::Application.running!

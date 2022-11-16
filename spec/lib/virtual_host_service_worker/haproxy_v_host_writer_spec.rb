@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe VirtualHostServiceWorker::HaProxyVHostWriter do
+describe VirtualHostServiceWorker::HaproxyVHostWriter do
   
   let :valid_payload do
     {
@@ -50,7 +50,7 @@ describe VirtualHostServiceWorker::HaProxyVHostWriter do
     }
   end
 
-  let :valid_ha_proxy_config do
+  let :valid_haproxy_config do
   end
 
   describe '.setup_v_host' do
@@ -81,7 +81,100 @@ describe VirtualHostServiceWorker::HaProxyVHostWriter do
 
       it 'should write the right pem certificate file path to the nginx configuration' do
       end
-      
+    end
+
+    context 'without a ca certificate' do
+      it 'should create the cert pem file' do
+      end
+    end
+
+    context 'with a wildcard server name' do
+      it 'should replace the asterix in the certificates file name' do
+      end
+
+      it 'should replace the asterix in the key file name' do
+      end
+    
+      it 'should replace the asterix in the server config file' do
+      end
+
+      it 'should write the right pem certificate file path to the nginx configuration' do
+      end
+
+      it 'should write the right pem certificate file path to the nginx configuration' do
+      end
+
+      it 'should not replace the asterisk in the server name for the nginx server name configuration field' do
+      end
+    end
+
+    context 'with a server name already existing in the webserver config' do
+
+      before :each do
+      end
+
+      it 'should find the existing files (the before each in the test should work)' do
+      end
+
+      it 'should replace the cert pem file' do
+      end
+
+      it 'should replace the ssl key' do
+      end
+
+      it 'should replace the config file' do
+      end
+
     end
   end
+
+  describe '.delete_v_host' do
+  
+    context 'with a not existing virtual host' do
+      it 'should do nothing and should not raise an exception' do
+      end
+    end
+
+    context 'with a existing virtual host' do
+      
+      before :each do
+      end
+      
+      it 'should delete the vhost config file' do
+      end
+      
+      it 'should delete the ssl key file' do
+      end
+      
+      it 'should delete the pem file' do
+      end
+      
+      it 'should reload the nginx configuration' do
+      end
+
+      it 'should delete the config link' do
+      end
+    end
+  end
+
+  describe '.config_valid?' do
+    context 'with a valid config file' do
+      
+      before :each do
+      end
+      
+      it 'should be true' do
+      end
+    end
+    
+    context 'with an invalid config file' do
+      
+      before :each do
+      end
+      
+      it 'should raise Exception' do
+      end
+    end
+  end
+
 end

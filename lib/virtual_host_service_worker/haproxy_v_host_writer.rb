@@ -3,7 +3,7 @@ require 'fileutils'
 
 module VirtualHostServiceWorker
 
-  class HaProxyVHostWriter < VHostWriter
+  class HaproxyVHostWriter < VHostWriter
 
     def self.setup_v_host(payload)
     end
@@ -29,9 +29,12 @@ module VirtualHostServiceWorker
     end
 
     def self.reload_config
+      execute_command("#{APP_CONFIG['haproxy_command']}") if config_valid?
     end
 
     def self.config_valid?
+      command = "#{APP_CONFIG['haproxy_command']} -f #{APP_CONFIG['haproxy_config']} -c"
+      execute_command(command, 'Invalid haproxy configuration')
     end
     
   end
