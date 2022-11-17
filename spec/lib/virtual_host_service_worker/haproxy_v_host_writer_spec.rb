@@ -53,6 +53,10 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
   let :valid_haproxy_config do
   end
 
+  let :invalid_haproxy_config do
+  end
+
+
   describe '.setup_v_host' do
     
     before :each do
@@ -60,26 +64,27 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
     
     context 'with a valid cert, ca cert and ssl key' do
       
-      it 'should create the key file' do
+      it 'should create .pem file' do
+        VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
+        expect(File.exists?("#{APP_CONFIG['haproxy_cert_dir']}/example.de.pem")).to be true
       end
       
-      it 'should create the cert key file' do
+      it 'should add cert.pem entry to cert-list' do
       end
       
-      it 'should create the cert pem file' do
-      end
-      
-      it 'should reload the nginx configuration' do
-      end
-
-      it 'should link the nginx configuration to the directory specified in the config' do
+      it 'should reload the haproxy configuration' do
+        VirtualHostServiceWorker::HaproxyVHostWriter.expects(:reload_config).once
+        VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
       end
 
-      it 'should write the right pem certificate file path to the nginx configuration' do
+      it 'should link the haproxy configuration to the directory specified in the config' do
+      end
+
+      it 'should write the right pem certificate file path to the haproxy configuration' do
 
       end
 
-      it 'should write the right pem certificate file path to the nginx configuration' do
+      it 'should write the right pem certificate file path to the haproxy configuration' do
       end
     end
 
@@ -98,13 +103,13 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       it 'should replace the asterix in the server config file' do
       end
 
-      it 'should write the right pem certificate file path to the nginx configuration' do
+      it 'should write the right pem certificate file path to the haproxy configuration' do
       end
 
-      it 'should write the right pem certificate file path to the nginx configuration' do
+      it 'should write the right pem certificate file path to the haproxy configuration' do
       end
 
-      it 'should not replace the asterisk in the server name for the nginx server name configuration field' do
+      it 'should not replace the asterisk in the server name for the haproxy server name configuration field' do
       end
     end
 
@@ -149,7 +154,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       it 'should delete the pem file' do
       end
       
-      it 'should reload the nginx configuration' do
+      it 'should reload the haproxy configuration' do
       end
 
       it 'should delete the config link' do
@@ -159,20 +164,28 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
 
   describe '.config_valid?' do
     context 'with a valid config file' do
-      
+
       before :each do
+        File.open(APP_CONFIG['haproxy_config'], 'w') do |f|
+          f.write(valid_haproxy_config)
+        end
       end
       
       it 'should be true' do
+        expect(VirtualHostServiceWorker::HaproxyVHostWriter.config_valid?).to be true
       end
     end
     
     context 'with an invalid config file' do
       
       before :each do
+        File.open(APP_CONFIG['haproxy_config'], 'w') do |f|
+          f.write(invalid_haproxy_config)
+        end
       end
       
       it 'should raise Exception' do
+        expect{VirtualHostServiceWorker::HaproxyVHostWriter.config_valid?}.to raise_error
       end
     end
   end
