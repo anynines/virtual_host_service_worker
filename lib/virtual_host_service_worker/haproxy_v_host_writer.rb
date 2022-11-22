@@ -2,11 +2,9 @@ require 'erubis'
 require 'fileutils'
 
 module VirtualHostServiceWorker
-
   class HaproxyVHostWriter < VHostWriter
 
     def self.setup_v_host(payload)
-      pp payload
       payload['server_name'] = payload['server_name'].downcase
       payload['server_aliases'] = payload['server_aliases'].downcase if payload['server_aliases']
 
@@ -15,13 +13,16 @@ module VirtualHostServiceWorker
                                  payload['ssl_certificate'],
                                  payload['ssl_key'])
 
+      write_certificate_list(payload['server_name'], payload['server_aliases'])
+
       reload_config
     end
 
     def self.delete_v_host(server_name)
-    end
+      delete_certificate(server_name)
+      delete_from_certificate_list(server_name)
 
-    def self.write_shared_webserver_config_files
+      reload_config
     end
 
     protected
@@ -42,9 +43,45 @@ module VirtualHostServiceWorker
           :ssl_key => ssl_key,
         }))
       end
+
     end
 
-    def self.write_certificate_list()
+    def self.write_certificate_list(server_name, server_aliases)
+      cert_list = "#{APP_CONFIG['haproxy_cert_list']}"
+      pem_path = File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.pem")
+
+      shared_template_file = File.join(File.dirname(__FILE__), "..", "..", "templates", "haproxy_crt_list.erb")
+      shared_template = Erubis::Eruby.new(File.read(shared_template_file))
+
+      shared_config_file = File.join(cert_list)
+
+      File.open(shared_config_file, 'a+') do |f|
+        f.write(shared_template.result({
+          :pem_path       => pem_path,
+          :ssl_ciphers    => APP_CONFIG['haproxy_ssl_ciphers'],
+          :server_names   => server_name,
+        }))
+        f.write "\n"
+      end
+    end
+
+    def self.delete_certificate(server_name)
+      cert_file = File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{server_name}.pem")
+
+      execute_command("rm -f #{cert_file}")
+    end
+
+    def self.delete_from_certificate_list(server_name)
+      cert_file = File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{server_name.downcase}.pem")
+
+      cert_list = File.readlines(APP_CONFIG['haproxy_cert_list'])
+      matches = cert_list.reject { |entry| entry.include?(cert_file) }
+
+      File.open((APP_CONFIG['haproxy_cert_list'] ), 'w') do |f|
+        matches.each do |entry|
+          f.write entry
+        end
+      end
 
     end
 

@@ -27,11 +27,13 @@ APP_CONFIG = {
   "nginx_command"     => File.expand_path('../../spec/support/nginx_dummy', __FILE__),
   "routers"           => [],
 
-  "haproxy_command"   => File.expand_path('../../spec/support/haproxy_dummy', __FILE__),
-  "haproxy_reload"    => File.expand_path('../../spec/support/haproxy_dummy', __FILE__),
-  "haproxy_config"    => File.expand_path('../../tmp/haproxy/config/haproxy.config', __FILE__),
-  "haproxy_cert_dir"  => File.expand_path('../../tmp/haproxy/certificates', __FILE__) + '/',
-  "haproxy_cert_list" => File.expand_path('../../tmp/haproxy-certificate-list', __FILE__),
+  "haproxy_command"         => File.expand_path('../../spec/support/haproxy_dummy', __FILE__),
+  "haproxy_reload"          => File.expand_path('../../spec/support/haproxy_dummy', __FILE__),
+  "haproxy_dir"             => File.expand_path('../../tmp/haproxy/', __FILE__),
+  "haproxy_config"          => File.expand_path('../../tmp/haproxy/config/haproxy.config', __FILE__),
+  "haproxy_cert_dir"        => File.expand_path('../../tmp/haproxy/certificates', __FILE__) + '/',
+  "haproxy_cert_list"       => File.expand_path('../../tmp/haproxy/haproxy-certificate-list', __FILE__),
+  "haproxy_ssl_ciphers"     => "[alpn h2 ssl-min-ver TLSv1.2]",
 }
 
 DaemonKit::Application.running!
