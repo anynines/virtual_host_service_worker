@@ -79,9 +79,11 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
   end
 
   let :valid_haproxy_config do
+    File.read("spec/support/haproxy.cfg")
   end
 
   let :invalid_haproxy_config do
+    File.read("spec/support/invalid_haproxy.cfg")
   end
 
 
@@ -119,10 +121,6 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       end
     end
 
-    context 'without a ca certificate' do
-      it 'should create the cert pem file'
-    end
-
     context 'with a wildcard server name' do
       it 'should replace the asterix in the certificates file name' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
@@ -139,10 +137,6 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
   end
 
   describe '.delete_v_host' do
-  
-    context 'with a not existing virtual host' do
-      it 'should do nothing and should not raise an exception'
-    end
 
     context 'with a existing virtual host' do
       
@@ -194,6 +188,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       end
       
       it 'should raise Exception' do
+        APP_CONFIG['haproxy_config'] = File.expand_path('../../tmp/haproxy/config/invalid_haproxy.cfg', __FILE__)
         expect{VirtualHostServiceWorker::HaproxyVHostWriter.config_valid?}.to raise_error
       end
     end
