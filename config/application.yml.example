@@ -1,18 +1,30 @@
 production:
   amqp_channel:       '' # Must be the same for each worker and the api
   queue_id:           '' # Must differ for each worker
+  
+  #nginx
   cert_dir:           '' # The directory where the ssl certificates should be stored
   v_host_config_dir:  '' # The directory where each vhost configuration file should be stored
   webserver_config:   '' # the main webserver configuration file path
   shared_config:      '' # the config file containting configuration which affects all vhosts - this file will be overriden by each worker restart
   shared_config_wss:  '' #the config file containing configuration which affects all vhosts regarding websockets. - will be overridden by each worker restart
-
   upstream_config:    '' # the definition of the upstream (this contains all router ip, see below) - this file will be overriden by each worker restart
   nginx_command:      '' # the command to execute the nginx server
   routers:            [] # all router ips wich will be written in the upstream, see above
+
+  # HAProxy Configuration
+  use_haproxy:          true                                              # If set to true replaces the old NGINX worker
+  haproxy_command:      "/var/vcap/packages/haproxy/bin/haproxy"          # Path to HAProxy binary
+  haproxy_reload:       "/var/vcap/jobs/haproxy/bin/reload"               # Path to binary for triggering reload
+  haproxy_config:       "/var/vcap/jobs/haproxy/config/haproxy.config"    # Path to the HAProxy configuration file
+  haproxy_cert_dir:     "/var/vcap/store/haproxy-certificates"            # Path to the directory containing the certificates to be used
+  haproxy_cert_list:    "/var/vcap/store/haproxy-certificate-list"        # Path to the Certificate list
+  haproxy_ssl_ciphers:  ""
 development:
   amqp_channel:       ''
   queue_id:           ''
+
+  #nginx
   cert_dir:           ''
   v_host_config_dir:  ''
   webserver_config:   ''
@@ -20,13 +32,34 @@ development:
   upstream_config:    ''
   nginx_command:      ''
   routers:            []
+  
+  # HAProxy Configuration
+  use_haproxy:          true
+  haproxy_command:      "/var/vcap/packages/haproxy/bin/haproxy"
+  haproxy_reload:       "/var/vcap/jobs/haproxy/bin/reload"
+  haproxy_config:       "/var/vcap/jobs/haproxy/config/haproxy.config"
+  haproxy_cert_dir:     "/var/vcap/store/haproxy-certificates/"
+  haproxy_cert_list:    "/var/vcap/store/haproxy-certificate-list"
+  haproxy_ssl_ciphers:  ""
 test:
   amqp_channel:       ''
   queue_id:           ''
   cert_dir:           ''
+  
+  #nginx
   v_host_config_dir:  ''
   webserver_config:   ''
   shared_config:      ''
   upstream_config:    ''
   nginx_command:      ''
   routers:            []
+
+  # HAProxy Configuration
+  use_haproxy:          true
+  haproxy_command:      "../../spec/support/haproxy_dummy"
+  haproxy_reload:       "../../spec/support/haproxy_dummy"
+  haproxy_dir:          "../../tmp/haproxy/"
+  haproxy_config:       "../../tmp/haproxy/config/haproxy.config"
+  haproxy_cert_dir:     "../../tmp/haproxy/certificates/"
+  haproxy_cert_list:    "../../tmp/haproxy/haproxy-certificate-list"
+  haproxy_ssl_ciphers:  "[alpn h2 ssl-min-ver TLSv1.2]"
