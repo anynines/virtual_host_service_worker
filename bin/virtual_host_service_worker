@@ -9,6 +9,8 @@ begin
   DaemonKit.configuration.force_kill_wait = 5
   DaemonKit::Application.exec( DAEMON_ROOT + '/libexec/virtual_host_service_worker-daemon.rb' )
 rescue Exception => e
-  Honeybadger.notify(e)
+  unless APP_CONFIG['honeybadger_api_key'].empty?
+    Honeybadger.notify(e)
+  end
   raise e
 end

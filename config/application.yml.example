@@ -1,4 +1,5 @@
 production:
+  honeybadger_api_key: '' # Allow use of honeybadger by setting api key here
   amqp_channel:       '' # Must be the same for each worker and the api
   queue_id:           '' # Must differ for each worker
   cert_dir:           '' # The directory where the ssl certificates should be stored
@@ -11,6 +12,7 @@ production:
   nginx_command:      '' # the command to execute the nginx server
   routers:            [] # all router ips wich will be written in the upstream, see above
 development:
+  honeybadger_api_key: ''
   amqp_channel:       ''
   queue_id:           ''
   cert_dir:           ''
@@ -21,6 +23,7 @@ development:
   nginx_command:      ''
   routers:            []
 test:
+  honeybadger_api_key: ''
   amqp_channel:       ''
   queue_id:           ''
   cert_dir:           ''
