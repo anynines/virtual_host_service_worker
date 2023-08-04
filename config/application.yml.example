@@ -1,4 +1,5 @@
 production:
+  honeybadger_api_key: '' # Allow use of honeybadger by setting api key here
   amqp_channel:       '' # Must be the same for each worker and the api
   queue_id:           '' # Must differ for each worker
   
@@ -21,6 +22,7 @@ production:
   haproxy_cert_list:    "/var/vcap/store/haproxy-certificate-list"        # Path to the Certificate list
   haproxy_ssl_ciphers:  ""
 development:
+  honeybadger_api_key: ''
   amqp_channel:       ''
   queue_id:           ''
 
@@ -42,6 +44,7 @@ development:
   haproxy_cert_list:    "/var/vcap/store/haproxy-certificate-list"
   haproxy_ssl_ciphers:  ""
 test:
+  honeybadger_api_key: ''
   amqp_channel:       ''
   queue_id:           ''
   cert_dir:           ''
