@@ -2,7 +2,7 @@ production:
   honeybadger_api_key: '' # Allow use of honeybadger by setting api key here
   amqp_channel:       '' # Must be the same for each worker and the api
   queue_id:           '' # Must differ for each worker
-  
+
   #nginx
   cert_dir:           '' # The directory where the ssl certificates should be stored
   v_host_config_dir:  '' # The directory where each vhost configuration file should be stored
@@ -14,12 +14,13 @@ production:
   routers:            [] # all router ips wich will be written in the upstream, see above
 
   # HAProxy Configuration
-  use_haproxy:          true                                              # If set to true replaces the old NGINX worker
-  haproxy_command:      "/var/vcap/packages/haproxy/bin/haproxy"          # Path to HAProxy binary
-  haproxy_reload:       "/var/vcap/jobs/haproxy/bin/reload"               # Path to binary for triggering reload
-  haproxy_config:       "/var/vcap/jobs/haproxy/config/haproxy.config"    # Path to the HAProxy configuration file
-  haproxy_cert_dir:     "/var/vcap/store/haproxy-certificates"            # Path to the directory containing the certificates to be used
-  haproxy_cert_list:    "/var/vcap/store/haproxy-certificate-list"        # Path to the Certificate list
+  use_haproxy:          true                                                                      # If set to true replaces the old NGINX worker
+  haproxy_command:      "/var/vcap/packages/haproxy/bin/haproxy"                                  # Path to HAProxy binary
+  haproxy_reload:       "/var/vcap/jobs/haproxy/bin/reload"                                       # Path to binary for triggering reload
+  haproxy_config:       "/var/vcap/jobs/haproxy/config/haproxy.config"                            # Path to the HAProxy configuration file
+  haproxy_cert_dir:     "/var/vcap/store/virtual_host_service_worker/ssl"                         # Path to the directory containing the certificates to be used
+  haproxy_cert_list:    "/var/vcap/store/virtual_host_service_worker/haproxy-certificate-list"    # Path to the Certificate list
+
   haproxy_ssl_ciphers:  ""
 development:
   honeybadger_api_key: ''
@@ -34,21 +35,21 @@ development:
   upstream_config:    ''
   nginx_command:      ''
   routers:            []
-  
+
   # HAProxy Configuration
   use_haproxy:          true
   haproxy_command:      "/var/vcap/packages/haproxy/bin/haproxy"
   haproxy_reload:       "/var/vcap/jobs/haproxy/bin/reload"
   haproxy_config:       "/var/vcap/jobs/haproxy/config/haproxy.config"
-  haproxy_cert_dir:     "/var/vcap/store/haproxy-certificates/"
-  haproxy_cert_list:    "/var/vcap/store/haproxy-certificate-list"
+  haproxy_cert_dir:     "/var/vcap/store/virtual_host_service_worker/ssl"
+  haproxy_cert_list:    "/var/vcap/store/virtual_host_service_worker/haproxy-certificate-list"
   haproxy_ssl_ciphers:  ""
 test:
   honeybadger_api_key: ''
   amqp_channel:       ''
   queue_id:           ''
   cert_dir:           ''
-  
+
   #nginx
   v_host_config_dir:  ''
   webserver_config:   ''
