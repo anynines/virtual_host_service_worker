@@ -14,6 +14,7 @@ GEM
     honeybadger (5.0.2)
     mocha (2.0.2)
       ruby2_keywords (>= 0.0.5)
+    psych (3.3.4)
     rake (13.0.6)
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
@@ -41,6 +42,7 @@ DEPENDENCIES
   erubis
   honeybadger
   mocha
+  psych (< 4)
   rake
   rspec
   safely
