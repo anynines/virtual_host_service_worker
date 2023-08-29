@@ -15,6 +15,7 @@ gem 'safely'
 gem 'amqp'
 gem 'erubis'
 gem 'honeybadger'
+gem 'psych', '< 4'
 
 group :development, :test do
   gem 'rake'
