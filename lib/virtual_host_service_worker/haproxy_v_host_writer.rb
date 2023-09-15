@@ -38,8 +38,8 @@ module VirtualHostServiceWorker
       shared_config_file = File.join(pem_file)
       File.open(shared_config_file, 'w') do |f|
         f.write(shared_template.result({
-          :ssl_ca_certificate => ca_cert,
           :ssl_certificate => cert,
+          :ssl_ca_certificate => ca_cert,
           :ssl_key => ssl_key,
         }))
       end
