@@ -165,7 +165,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
     end
   end
 
-  describe '.config_valid?' do
+  describe '.config_valid' do
     context 'with a valid config file' do
 
       before :each do
@@ -175,7 +175,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       end
       
       it 'should be true' do
-        expect(VirtualHostServiceWorker::HaproxyVHostWriter.config_valid?).to be true
+        expect(VirtualHostServiceWorker::HaproxyVHostWriter.config_valid).to be true
       end
     end
     
@@ -189,7 +189,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       
       it 'should raise Exception' do
         APP_CONFIG['haproxy_config'] = File.expand_path('../../tmp/haproxy/config/invalid_haproxy.cfg', __FILE__)
-        expect{VirtualHostServiceWorker::HaproxyVHostWriter.config_valid?}.to raise_error
+        expect{VirtualHostServiceWorker::HaproxyVHostWriter.config_valid}.to raise_error
       end
     end
   end
