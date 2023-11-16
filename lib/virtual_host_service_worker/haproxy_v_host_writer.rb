@@ -38,8 +38,8 @@ module VirtualHostServiceWorker
       shared_config_file = File.join(pem_file)
       File.open(shared_config_file, 'w') do |f|
         f.write(shared_template.result({
-          :ssl_ca_certificate => ca_cert,
           :ssl_certificate => cert,
+          :ssl_ca_certificate => ca_cert,
           :ssl_key => ssl_key,
         }))
       end
@@ -86,13 +86,12 @@ module VirtualHostServiceWorker
     end
 
     def self.reload_config
-      execute_command("#{APP_CONFIG['haproxy_command']}") if config_valid?
+      execute_command("#{APP_CONFIG['haproxy_reload']}") if config_valid?
     end
 
     def self.config_valid?
       command = "#{APP_CONFIG['haproxy_command']} -f #{APP_CONFIG['haproxy_config']} -c"
       execute_command(command, 'Invalid haproxy configuration')
     end
-    
   end
 end
