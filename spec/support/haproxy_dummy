@@ -1,0 +1,11 @@
+#! /bin/sh
+
+if [[ ${@} =~ "invalid_haproxy.cfg" ]]; then
+  echo "[NOTICE]   (142) : haproxy version is 2.4.19-ec55434"
+  echo "[ALERT]    (142) : parsing [invalid_haproxy.cfg:1]: unknown keyword 'sd' out of section."
+  echo "[ALERT]    (142) : Error(s) found in configuration file : invalid_haproxy.cfg"
+  echo "[ALERT]    (142) : Fatal errors found in configuration."
+  exit 1
+else
+  echo ${@}
+fi

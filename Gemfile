@@ -8,13 +8,14 @@
 
 source 'https://rubygems.org'
 
-ruby '2.2.4'
+ruby '3.1.2'
 
 gem 'daemon-kit'
 gem 'safely'
 gem 'amqp'
 gem 'erubis'
 gem 'honeybadger'
+gem 'psych', '< 4'
 
 group :development, :test do
   gem 'rake'
