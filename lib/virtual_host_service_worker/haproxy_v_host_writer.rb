@@ -51,7 +51,9 @@ module VirtualHostServiceWorker
 
       shared_config_file = File.join(cert_list)
 
-      server_names = [server_name, server_aliases].compact * ' '
+      server_names = [server_name]
+      server_names += server_aliases.split(',') if server_aliases
+      server_names = server_names.flatten.compact * ' '
 
       File.open(shared_config_file, 'a+') do |f|
         f.write(shared_template.result({
