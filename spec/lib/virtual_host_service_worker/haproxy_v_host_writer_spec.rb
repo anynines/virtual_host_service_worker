@@ -209,8 +209,6 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       it 'should delete from the haproxy cert list' do
         expect(File.read(APP_CONFIG['haproxy_cert_list'])).to include(valid_payload2_cert_list_entry)
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('test.de')
-        cert_list = File.read(APP_CONFIG['haproxy_cert_list'])
-        puts cert_list
         expect(File.read(APP_CONFIG['haproxy_cert_list'])).to_not include(valid_payload2_cert_list_entry)
       end
 
