@@ -25,63 +25,47 @@ module VirtualHostServiceWorker
     end
 
     def self.write_bundled_certificates(server_name, ca_cert, cert, ssl_key)
-      pem_file = File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.pem")
+      pem_path = build_pem_path(server_name)
+      FileUtils.rm(pem_path) if File.exist?(pem_path)
 
-      FileUtils.rm(pem_file) if File.exist?(pem_file)
-
-      shared_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'haproxy_cert_x_pem.erb')
-      shared_template = Erubis::Eruby.new(File.read(shared_template_file))
-
-      shared_config_file = File.join(pem_file)
-      File.open(shared_config_file, 'w') do |f|
-        f.write(shared_template.result({
-                                         ssl_certificate: cert,
-                                         ssl_ca_certificate: ca_cert,
-                                         ssl_key:
-                                       }))
+      File.open(pem_path, 'w') do |f|
+        f.write(pem_template.result({
+                                      ssl_certificate: cert,
+                                      ssl_ca_certificate: ca_cert,
+                                      ssl_key:
+                                    }))
       end
     end
 
     def self.write_certificate_list(server_name, server_aliases)
-      cert_list = "#{APP_CONFIG['haproxy_cert_list']}"
-      pem_path = File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.pem")
-
-      shared_template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'haproxy_crt_list.erb')
-      shared_template = Erubis::Eruby.new(File.read(shared_template_file))
-
-      shared_config_file = File.join(cert_list)
-
       server_names = [server_name]
       server_names += server_aliases.split(',') if server_aliases
       server_names = server_names.flatten.compact * ' '
 
-      File.open(shared_config_file, 'a+') do |f|
-        f.write(shared_template.result({
-                                         pem_path:,
-                                         ssl_ciphers: APP_CONFIG['haproxy_ssl_ciphers'],
-                                         server_names:
-                                       }))
+      File.open(cert_list_path, 'a+') do |f|
+        f.write(cert_list_template.result({
+                                            pem_path: build_pem_path(server_name),
+                                            ssl_ciphers: APP_CONFIG['haproxy_ssl_ciphers'],
+                                            server_names:
+                                          }))
         f.write "\n"
       end
     end
 
     def self.delete_certificate(server_name)
-      cert_file = File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{server_name}.pem")
-
-      execute_command("rm -f #{cert_file}")
+      execute_command("rm -f #{build_pem_path(server_name)}")
     end
 
     def self.delete_from_certificate_list(server_name)
-      cert_file = File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{server_name.downcase}.pem")
+      pem_path = build_pem_path(server_name)
 
-      cert_list = File.readlines(APP_CONFIG['haproxy_cert_list'])
-      matches = cert_list.reject { |entry| entry.include?(cert_file) }
+      cert_list = File.readlines(cert_list_path)
 
-      File.open((APP_CONFIG['haproxy_cert_list']), 'w') do |f|
-        matches.each do |entry|
-          f.write entry
-        end
-      end
+      new_cert_list = cert_list.reject do |entry|
+        entry.include?(pem_path)
+      end.join
+
+      File.write(cert_list_path, new_cert_list, mode: 'w')
     end
 
     def self.reload_config
@@ -91,6 +75,36 @@ module VirtualHostServiceWorker
     def self.config_valid?
       command = "#{APP_CONFIG['haproxy_command']} -f #{APP_CONFIG['haproxy_config']} -c"
       execute_command(command, 'Invalid haproxy configuration')
+    end
+
+    def self.build_pem_path(server_name)
+      File.join(APP_CONFIG['haproxy_cert_dir'].split('/'), "#{sanitize_file_name(server_name)}.pem")
+    end
+
+    def self.sanitize_file_name(server_name)
+      server_name.downcase.gsub('*', 'wild')
+    end
+
+    def self.cert_list_path
+      APP_CONFIG['haproxy_cert_list']
+    end
+
+    def self.cert_list_template
+      Erubis::Eruby.new(File.read(cert_list_template_path))
+    end
+
+    def self.cert_list_template_path
+      File.join(File.dirname(__FILE__), '..', '..', 'templates', 'haproxy_crt_list.erb')
+    end
+
+    def self.pem_template
+      Erubis::Eruby.new(
+        File.read(pem_template_path)
+      )
+    end
+
+    def self.pem_template_path
+      File.join(File.dirname(__FILE__), '..', '..', 'templates', 'haproxy_cert_x_pem.erb')
     end
   end
 end

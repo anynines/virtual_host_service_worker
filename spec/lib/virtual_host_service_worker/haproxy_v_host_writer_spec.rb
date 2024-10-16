@@ -201,9 +201,23 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
         expect(File.exist?("#{APP_CONFIG['haproxy_cert_dir']}example.de.pem")).to be false
       end
 
+      it 'should delete the pem file for wildcard' do
+        VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('*.eXample.de')
+        expect(File.exist?("#{APP_CONFIG['haproxy_cert_dir']}wild.example.de.pem")).to be false
+      end
+
       it 'should delete from the haproxy cert list' do
-        VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('eXample.de')
-        expect(File.readlines(APP_CONFIG['haproxy_cert_list'])).to_not include(valid_payload2_cert_list_entry)
+        expect(File.read(APP_CONFIG['haproxy_cert_list'])).to include(valid_payload2_cert_list_entry)
+        VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('test.de')
+        cert_list = File.read(APP_CONFIG['haproxy_cert_list'])
+        puts cert_list
+        expect(File.read(APP_CONFIG['haproxy_cert_list'])).to_not include(valid_payload2_cert_list_entry)
+      end
+
+      it 'should delete from the haproxy cert list for wildcard' do
+        expect(File.read(APP_CONFIG['haproxy_cert_list'])).to include('wild.example.de.pem')
+        VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('*.eXample.de')
+        expect(File.read(APP_CONFIG['haproxy_cert_list'])).to_not include('wild.example.de.pem')
       end
 
       it 'should reload the haproxy configuration' do
