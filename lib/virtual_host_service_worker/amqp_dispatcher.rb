@@ -8,6 +8,14 @@ module VirtualHostServiceWorker
     def self.dispatch(payload)
       DaemonKit.logger.info("AMQP message received")
       begin
+        if payload['action'] == "reload" && APP_CONFIG['use_haproxy'] == true
+          if VirtualHostServiceWorker::HaproxyVHostWriter.haproxy_instance_limit_reached?
+            #  Requeue
+          else
+            DaemonKit.logger.info("HAProxy - Trigger reload for #{payload['server_name']}")
+            VirtualHostServiceWorker::VirtualHostServiceWorker.reload_config
+          end
+        end
         if payload['ssl_certificate'] and payload['ssl_ca_certificate'] and payload['ssl_key']
           DaemonKit.logger.info("adding a new vhost: #{payload['server_name']}")
 
