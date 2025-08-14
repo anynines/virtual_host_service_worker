@@ -97,6 +97,12 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
     before :each do
     end
 
+    context 'it should requeu tasks if the instance limit has been reached' do
+      it 'should requeu when limit is reached' do
+      end
+      
+    end
+
     context 'with a valid cert, ca cert and ssl key' do
       it 'should create .pem file' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
