@@ -9,7 +9,6 @@ module VirtualHostServiceWorker
         
         payload = {
           :action => 'reload',
-          :server_name => server_name
         }
         
         exchange.publish(payload.to_json, :persistent => true) do

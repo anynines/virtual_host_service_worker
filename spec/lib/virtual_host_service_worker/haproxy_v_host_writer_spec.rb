@@ -124,7 +124,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       end
 
       it 'should reload the haproxy configuration' do
-        VirtualHostServiceWorker::HaproxyVHostWriter.expects(:reload_config).once
+        expect(VirtualHostServiceWorker::HaproxyVHostWriter).to receive(:reload_config).once
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
       end
     end
@@ -225,7 +225,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       end
 
       it 'should reload the haproxy configuration' do
-        VirtualHostServiceWorker::HaproxyVHostWriter.expects(:reload_config).once
+        expect(VirtualHostServiceWorker::HaproxyVHostWriter).to receive(:reload_config).once
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('eXample.de')
       end
     end

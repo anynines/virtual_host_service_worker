@@ -94,7 +94,7 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       end
       
       it 'should reload the nginx configuration' do
-        VirtualHostServiceWorker::NginxVHostWriter.expects(:reload_config).once
+        expect(VirtualHostServiceWorker::NginxVHostWriter).to receive(:reload_config).once
         VirtualHostServiceWorker::NginxVHostWriter.setup_v_host(valid_payload)
       end
 
@@ -228,7 +228,7 @@ describe VirtualHostServiceWorker::NginxVHostWriter do
       end
       
       it 'should reload the nginx configuration' do
-        VirtualHostServiceWorker::NginxVHostWriter.expects(:reload_config).once
+        expect(VirtualHostServiceWorker::NginxVHostWriter).to receive(:reload_config).once
         VirtualHostServiceWorker::NginxVHostWriter.delete_v_host('eXample.de')
       end
 
