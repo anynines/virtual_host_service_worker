@@ -21,7 +21,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       'server_name' => 'eXample.de',
       'organization_guid' => 'a-valid-org-guid',
       'created_at' => '2013-07-03T07:52:05Z',
-      'updated_at' => '2013-07-03T07:52:05Z'
+      'updated_at' => '2013-07-03T07:52:05Z',
     }
   end
 
@@ -94,14 +94,8 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
   end
 
   describe '.setup_v_host' do
-    before :each do
-    end
 
-    context 'it should requeu tasks if the instance limit has been reached' do
-      it 'should requeu when limit is reached' do
-      end
-      
-    end
+
 
     context 'with a valid cert, ca cert and ssl key' do
       it 'should create .pem file' do
@@ -124,7 +118,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       end
 
       it 'should reload the haproxy configuration' do
-        expect(VirtualHostServiceWorker::HaproxyVHostWriter).to receive(:reload_config).once
+        expect(VirtualHostServiceWorker::AmqpDispatcher).to receive(:push_reload_to_amqp).once
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
       end
     end
@@ -225,7 +219,8 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       end
 
       it 'should reload the haproxy configuration' do
-        expect(VirtualHostServiceWorker::HaproxyVHostWriter).to receive(:reload_config).once
+        expect(VirtualHostServiceWorker::AmqpDispatcher).to receive(:push_reload_to_amqp).once
+        allow(VirtualHostServiceWorker::HaproxyVHostWriter).to receive(:haproxy_instance_limit_reached?).and_return false
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('eXample.de')
       end
     end

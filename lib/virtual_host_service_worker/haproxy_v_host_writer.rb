@@ -4,9 +4,6 @@ require 'fileutils'
 module VirtualHostServiceWorker
   class HaproxyVHostWriter < VHostWriter
     def self.setup_v_host(payload)
-      pp "------------PAYLOARD START----------------------"
-      pp payload
-      pp "------------PAYLOAD END----------------------"
       payload['server_name'] = payload['server_name'].downcase
       payload['server_aliases'] = payload['server_aliases'].downcase if payload['server_aliases']
 
@@ -16,7 +13,7 @@ module VirtualHostServiceWorker
                                  payload['ssl_key'])
 
       write_certificate_list(payload['server_name'], payload['server_aliases'])
-      
+
       VirtualHostServiceWorker::AmqpDispatcher.push_reload_to_amqp
     end
 
@@ -24,7 +21,7 @@ module VirtualHostServiceWorker
       delete_certificate(server_name)
       delete_from_certificate_list(server_name)
 
-      reload_config
+      VirtualHostServiceWorker::AmqpDispatcher.push_reload_to_amqp
     end
 
     def self.write_bundled_certificates(server_name, ca_cert, cert, ssl_key)
@@ -76,12 +73,11 @@ module VirtualHostServiceWorker
     end
 
     def self.haproxy_instance_limit_reached?
-      # currentInstances = `(pidof haproxy | wc -w)`
-      currentInstances = `(ps -A | grep haproxy | wc -w)`
-      pp currentInstances.to_i
-      pp APP_CONFIG['haproxy_reload_max_instances'].to_i
+      currentInstances = `(ps aux | grep haproxy | wc -l)`
 
-      return (currentInstances.strip.to_i >= APP_CONFIG['haproxy_reload_max_instances'].to_i) ? true : false
+      result = ((currentInstances.strip.to_i -1) >= APP_CONFIG['haproxy_reload_max_instances'].to_i)
+      
+      return result
     end
 
     def self.config_valid?

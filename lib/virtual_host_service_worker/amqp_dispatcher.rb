@@ -19,7 +19,7 @@ module VirtualHostServiceWorker
       return true
     end
 
-    ##
+    #
     # dispatches amqp-messages to method calls
     #
 
@@ -31,13 +31,13 @@ module VirtualHostServiceWorker
             self.push_reload_to_amqp
           else
             DaemonKit.logger.info("HAProxy - Trigger reload for #{payload['server_name']}")
-            VirtualHostServiceWorker::VirtualHostServiceWorker.reload_config
+            VirtualHostServiceWorker::HaproxyVHostWriter.reload_config
           end
         end
 
         if payload['ssl_certificate'] and payload['ssl_ca_certificate'] and payload['ssl_key']
           DaemonKit.logger.info("adding a new vhost: #{payload['server_name']}")
-
+          
           if APP_CONFIG['use_haproxy'] == true
             VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(payload)
             DaemonKit.logger.info("HAProxy - Succesfully added vhost #{payload['server_name']}")
