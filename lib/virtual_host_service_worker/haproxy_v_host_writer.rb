@@ -14,14 +14,14 @@ module VirtualHostServiceWorker
 
       write_certificate_list(payload['server_name'], payload['server_aliases'])
 
-      reload_config
+      VirtualHostServiceWorker::AmqpDispatcher.push_reload_to_amqp
     end
 
     def self.delete_v_host(server_name)
       delete_certificate(server_name)
       delete_from_certificate_list(server_name)
 
-      reload_config
+      VirtualHostServiceWorker::AmqpDispatcher.push_reload_to_amqp
     end
 
     def self.write_bundled_certificates(server_name, ca_cert, cert, ssl_key)
@@ -70,6 +70,14 @@ module VirtualHostServiceWorker
 
     def self.reload_config
       execute_command("#{APP_CONFIG['haproxy_reload']}") if config_valid?
+    end
+
+    def self.haproxy_instance_limit_reached?
+      currentInstances = `(ps aux | grep haproxy | wc -l)`
+
+      result = ((currentInstances.strip.to_i -1) >= APP_CONFIG['haproxy_reload_max_instances'].to_i)
+      
+      return result
     end
 
     def self.config_valid?

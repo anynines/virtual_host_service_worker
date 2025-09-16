@@ -1,7 +1,6 @@
 DAEMON_ENV = 'test' unless defined?( DAEMON_ENV )
 
 require 'rspec'
-require 'mocha'
 require 'fileutils'
 
 require File.dirname(__FILE__) + '/../config/environment'
@@ -40,5 +39,5 @@ DaemonKit::Application.running!
 
 RSpec.configure do |config|
   config.color = true
-  config.mock_with :mocha
+  config.mock_with :rspec
 end
