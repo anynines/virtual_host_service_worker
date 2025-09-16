@@ -14,12 +14,13 @@ production:
   routers:            [] # all router ips wich will be written in the upstream, see above
 
   # HAProxy Configuration
-  use_haproxy:          true                                                                      # If set to true replaces the old NGINX worker
-  haproxy_command:      "/var/vcap/packages/haproxy/bin/haproxy"                                  # Path to HAProxy binary
-  haproxy_reload:       "/var/vcap/jobs/haproxy/bin/reload"                                       # Path to binary for triggering reload
-  haproxy_config:       "/var/vcap/jobs/haproxy/config/haproxy.config"                            # Path to the HAProxy configuration file
-  haproxy_cert_dir:     "/var/vcap/store/virtual_host_service_worker/ssl"                         # Path to the directory containing the certificates to be used
-  haproxy_cert_list:    "/var/vcap/store/virtual_host_service_worker/haproxy-certificate-list"    # Path to the Certificate list
+  use_haproxy:                  true                                                                      # If set to true replaces the old NGINX worker
+  haproxy_command:              "/var/vcap/packages/haproxy/bin/haproxy"                                  # Path to HAProxy binary
+  haproxy_reload_max_instances: "4"                                                                       # Sets a Limit for the amount of instances that can be reloaded at the same time.
+  haproxy_reload:               "/var/vcap/jobs/haproxy/bin/reload"                                       # Path to binary for triggering reload
+  haproxy_config:               "/var/vcap/jobs/haproxy/config/haproxy.config"                            # Path to the HAProxy configuration file
+  haproxy_cert_dir:             "/var/vcap/store/virtual_host_service_worker/ssl"                         # Path to the directory containing the certificates to be used
+  haproxy_cert_list:            "/var/vcap/store/virtual_host_service_worker/haproxy-certificate-list"    # Path to the Certificate list
 
   haproxy_ssl_ciphers:  ""
 development:
@@ -37,13 +38,14 @@ development:
   routers:            []
 
   # HAProxy Configuration
-  use_haproxy:          true
-  haproxy_command:      "/var/vcap/packages/haproxy/bin/haproxy"
-  haproxy_reload:       "/var/vcap/jobs/haproxy/bin/reload"
-  haproxy_config:       "/var/vcap/jobs/haproxy/config/haproxy.config"
-  haproxy_cert_dir:     "/var/vcap/store/virtual_host_service_worker/ssl"
-  haproxy_cert_list:    "/var/vcap/store/virtual_host_service_worker/haproxy-certificate-list"
-  haproxy_ssl_ciphers:  ""
+  use_haproxy:                  true
+  haproxy_command:              "/var/vcap/packages/haproxy/bin/haproxy"
+  haproxy_reload:               "/var/vcap/jobs/haproxy/bin/reload"
+  haproxy_reload_max_instances: "4"
+  haproxy_config:               "/var/vcap/jobs/haproxy/config/haproxy.config"
+  haproxy_cert_dir:             "/var/vcap/store/virtual_host_service_worker/ssl"
+  haproxy_cert_list:            "/var/vcap/store/virtual_host_service_worker/haproxy-certificate-list"
+  haproxy_ssl_ciphers:          ""
 test:
   honeybadger_api_key: ''
   amqp_channel:       ''
@@ -59,11 +61,12 @@ test:
   routers:            []
 
   # HAProxy Configuration
-  use_haproxy:          true
-  haproxy_command:      "../../spec/support/haproxy_dummy"
-  haproxy_reload:       "../../spec/support/haproxy_dummy"
-  haproxy_dir:          "../../tmp/haproxy/"
-  haproxy_config:       "../../tmp/haproxy/config/haproxy.config"
-  haproxy_cert_dir:     "../../tmp/haproxy/certificates/"
-  haproxy_cert_list:    "../../tmp/haproxy/haproxy-certificate-list"
-  haproxy_ssl_ciphers:  "[alpn h2 ssl-min-ver TLSv1.2]"
+  use_haproxy:                  true
+  haproxy_command:              "../../spec/support/haproxy_dummy"
+  haproxy_reload:               "../../spec/support/haproxy_dummy"
+  haproxy_reload_max_instances: "4"
+  haproxy_dir:                  "../../tmp/haproxy/"
+  haproxy_config:               "../../tmp/haproxy/config/haproxy.config"
+  haproxy_cert_dir:             "../../tmp/haproxy/certificates/"
+  haproxy_cert_list:            "../../tmp/haproxy/haproxy-certificate-list"
+  haproxy_ssl_ciphers:          "[alpn h2 ssl-min-ver TLSv1.2]"

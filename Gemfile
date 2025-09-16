@@ -20,5 +20,4 @@ gem 'psych', '< 4'
 group :development, :test do
   gem 'rake'
   gem 'rspec'
-  gem 'mocha'
 end

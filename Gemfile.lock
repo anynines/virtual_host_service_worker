@@ -12,8 +12,6 @@ GEM
     erubis (2.7.0)
     eventmachine (1.2.7)
     honeybadger (5.0.2)
-    mocha (2.0.2)
-      ruby2_keywords (>= 0.0.5)
     psych (3.3.4)
     rake (13.0.6)
     rspec (3.12.0)
@@ -29,7 +27,6 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
-    ruby2_keywords (0.0.5)
     safely (0.3.2)
     thor (1.2.1)
 
@@ -41,7 +38,6 @@ DEPENDENCIES
   daemon-kit
   erubis
   honeybadger
-  mocha
   psych (< 4)
   rake
   rspec
