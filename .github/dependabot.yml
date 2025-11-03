@@ -1,0 +1,41 @@
+# version: 2
+
+# registries:
+#   github:
+#     type: git
+#     url: https://github.com
+#     username: x-access-token
+#     password: "${{ secrets.GIT_TOKEN }}"
+
+# updates:
+#   - package-ecosystem: "bundler"
+#     directory: '/'
+#     registries: "*"
+#     insecure-external-code-execution: allow
+#     schedule:
+#       interval: "daily"
+#       time: "09:00"
+#       timezone: "Europe/Berlin"
+#     target-branch: "develop"
+#     labels:
+#       - "Ruby dependencies"
+
+version: 2
+
+registries:
+  github:
+    type: git
+    url: https://github.com
+    username: x-access-token
+    password: "${{ secrets.GIT_TOKEN }}" # saved as a dependabot secret
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/"
+    registries: "*"
+    insecure-external-code-execution: allow
+    schedule:
+      interval: "daily"
+    target-branch: "develop"
+    labels:
+      - "Ruby dependencies"
+    
