@@ -26,7 +26,7 @@ module VirtualHostServiceWorker
 
     def self.write_bundled_certificates(server_name, ca_cert, cert, ssl_key)
       pem_path = build_pem_path(server_name)
-      FileUtils.rm(pem_path) if File.exist?(pem_path)
+      FileUtils.rm_f(pem_path)
 
       File.open(pem_path, 'w') do |f|
         f.write(pem_template.result({

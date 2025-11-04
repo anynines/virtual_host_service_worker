@@ -1,7 +1,5 @@
 module VirtualHostServiceWorker
-
   class AmqpDispatcher
-
     ##
     # dispatches amqp-messages to method calls
     #
