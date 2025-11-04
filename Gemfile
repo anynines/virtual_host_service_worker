@@ -24,5 +24,4 @@ gem "rubocop-rails-omakase", require: false
 group :development, :test do
   gem 'rake'
   gem 'rspec'
-  gem 'mocha'
 end

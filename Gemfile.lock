@@ -114,7 +114,6 @@ DEPENDENCIES
   daemon-kit
   erubis
   honeybadger
-  mocha
   psych (< 4)
   rake
   rspec
