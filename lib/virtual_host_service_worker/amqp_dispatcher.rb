@@ -1,21 +1,19 @@
 module VirtualHostServiceWorker
-
   class AmqpDispatcher
-
     def self.push_reload_to_amqp
       AMQP.start(APP_CONFIG['amqp']) do |connection|
         channel = AMQP::Channel.new(connection)
         exchange = channel.fanout(APP_CONFIG['amqp_channel'], :durable => true)
-        
+
         payload = {
           :action => 'reload',
         }
-        
+
         exchange.publish(payload.to_json, :persistent => true) do
           connection.close { EventMachine.stop }
         end
       end
-      
+
       return true
     end
 
@@ -37,7 +35,7 @@ module VirtualHostServiceWorker
 
         if payload['ssl_certificate'] and payload['ssl_ca_certificate'] and payload['ssl_key']
           DaemonKit.logger.info("adding a new vhost: #{payload['server_name']}")
-          
+
           if APP_CONFIG['use_haproxy'] == true
             VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(payload)
             DaemonKit.logger.info("HAProxy - Succesfully added vhost #{payload['server_name']}")

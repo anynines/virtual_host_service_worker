@@ -1,8 +1,6 @@
 module VirtualHostServiceWorker
-
   class VHostWriter
-
-    def self.setup_v_host(payload)
+    def self.setup_v_host(_payload)
       raise NotImplementedError.new
     end
 
@@ -15,9 +13,8 @@ module VirtualHostServiceWorker
       if $?.exitstatus != expected_return
         raise "Exception on executing command: #{command}\n Custom Message: #{custom_message}\n Command-Result: #{stdout}"
       end
+
       return true
     end
-
   end
-
 end
