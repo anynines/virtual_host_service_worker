@@ -75,8 +75,8 @@ module VirtualHostServiceWorker
     def self.haproxy_instance_limit_reached?
       currentInstances = `(ps aux | grep haproxy | wc -l)`
 
-      result = ((currentInstances.strip.to_i -1) >= APP_CONFIG['haproxy_reload_max_instances'].to_i)
-      
+      result = ((currentInstances.strip.to_i(-1)) >= APP_CONFIG['haproxy_reload_max_instances'].to_i)
+
       return result
     end
 

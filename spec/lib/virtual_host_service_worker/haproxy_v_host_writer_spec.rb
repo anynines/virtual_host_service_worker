@@ -94,9 +94,6 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
   end
 
   describe '.setup_v_host' do
-
-
-
     context 'with a valid cert, ca cert and ssl key' do
       it 'should create .pem file' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
