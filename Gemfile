@@ -17,6 +17,10 @@ gem 'erubis'
 gem 'honeybadger'
 gem 'psych', '< 4'
 
+gem "rubocop"
+gem "rubocop-rspec"
+gem "rubocop-rails-omakase", require: false
+
 group :development, :test do
   gem 'rake'
   gem 'rspec'
