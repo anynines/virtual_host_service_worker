@@ -1,0 +1,16 @@
+name: Lint and SAST
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    uses: anynines/int-gitops/.github/workflows/linter_ruby.yml@master
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+
+  sast:
+    uses: anynines/int-gitops/.github/workflows/sast_ruby.yml@master
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
