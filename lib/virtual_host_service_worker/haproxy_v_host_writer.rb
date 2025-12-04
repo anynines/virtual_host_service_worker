@@ -26,15 +26,14 @@ module VirtualHostServiceWorker
 
     def self.write_bundled_certificates(server_name, ca_cert, cert, ssl_key)
       pem_path = build_pem_path(server_name)
-      FileUtils.rm(pem_path) if File.exist?(pem_path)
+      FileUtils.remove_file(pem_path, true)
+      FileUtils.mkdir_p(File.dirname(pem_path))
 
-      File.open(pem_path, 'w') do |f|
-        f.write(pem_template.result({
-                                      ssl_certificate: cert,
-                                      ssl_ca_certificate: ca_cert,
-                                      ssl_key:
-                                    }))
-      end
+      File.write(pem_path, pem_template.result({
+                                                 ssl_certificate: cert,
+                                                 ssl_ca_certificate: ca_cert,
+                                                 ssl_key:
+                                               }))
     end
 
     def self.write_certificate_list(server_name, server_aliases)
@@ -75,9 +74,7 @@ module VirtualHostServiceWorker
     def self.haproxy_instance_limit_reached?
       currentInstances = `(ps aux | grep haproxy | wc -l)`
 
-      result = ((currentInstances.strip.to_i -1) >= APP_CONFIG['haproxy_reload_max_instances'].to_i)
-      
-      return result
+      (currentInstances.strip.to_i(-1) >= APP_CONFIG['haproxy_reload_max_instances'].to_i)
     end
 
     def self.config_valid?

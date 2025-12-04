@@ -1,0 +1,41 @@
+name: SAST
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  brakeman:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: false
+
+      - name: Install Brakeman
+        run: gem install brakeman -N
+
+      - name: Run brakeman
+        run: brakeman --force
+
+  bearer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby versions
+        uses: ruby/setup-ruby@v1
+
+      - name: Bearer
+        uses: bearer/bearer-action@v2
