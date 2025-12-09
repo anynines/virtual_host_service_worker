@@ -68,7 +68,7 @@ module VirtualHostServiceWorker
     end
 
     def self.reload_config
-      execute_command("#{APP_CONFIG['haproxy_reload']}") if config_valid?
+      execute_command(APP_CONFIG['haproxy_reload']) if config_valid?
     end
 
     def self.haproxy_instance_limit_reached?
@@ -78,7 +78,7 @@ module VirtualHostServiceWorker
     end
 
     def self.config_valid?
-      command = "#{APP_CONFIG['haproxy_command']} -f #{APP_CONFIG['haproxy_config']} -c"
+      command = [APP_CONFIG['haproxy_command'], '-f', APP_CONFIG['haproxy_config'], '-c']
       execute_command(command, 'Invalid haproxy configuration')
     end
 
