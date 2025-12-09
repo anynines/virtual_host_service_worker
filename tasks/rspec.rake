@@ -9,5 +9,5 @@ if ['test', 'development'].include?(DAEMON_ENV)
 
   # Want other tests/tasks run by default?
   # Add them to the list
-  task :default => [:spec] #, :features]
+  task :default => [:spec] # , :features]
 end

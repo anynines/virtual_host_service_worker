@@ -2,7 +2,6 @@ require 'erubis'
 require 'fileutils'
 
 module VirtualHostServiceWorker
-
   ##
   # This class provides methods to add virtual hosts to an nginx configuration.
   # Public interface:
@@ -10,7 +9,6 @@ module VirtualHostServiceWorker
   #   self.write_shared_webserver_config_files
   #
   class NginxVHostWriter < VHostWriter
-
     ##
     # Adds a new virtual hosts configured with a ssl certificate to the nginx config.
     # The virtual host information is passed as hash to the method. The hash must contain the
@@ -44,7 +42,8 @@ module VirtualHostServiceWorker
     #
     def self.delete_v_host(server_name)
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name}.conf")
-      v_host_link = File.join(APP_CONFIG['v_host_link_dir'].split('/'), "#{server_name}.conf") if APP_CONFIG['v_host_link_dir']
+      v_host_link = File.join(APP_CONFIG['v_host_link_dir'].split('/'),
+                              "#{server_name}.conf") if APP_CONFIG['v_host_link_dir']
       key_file    = File.join(APP_CONFIG['cert_dir'].split('.'), server_name.gsub('*', 'wild'), "#{server_name}.key")
       pem_file    = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name}.pem")
 
@@ -78,40 +77,36 @@ module VirtualHostServiceWorker
       upstream_config_file = File.join(APP_CONFIG['upstream_config'].split('/'))
       File.open(upstream_config_file, 'w') do |f|
         f.write(upstream_template.result({
-          :routers => APP_CONFIG['routers']
-        }))
+                                           :routers => APP_CONFIG['routers']
+                                         }))
       end
 
       reload_config
     end
 
-    protected
-
     ##
     # Write the actual virtual host configuration pointing to the certificate fiels.
     #
     def self.write_webserver_config(server_name, server_aliases)
-
       template_file = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'nginx_v_host.conf.erb')
       template = Erubis::Eruby.new(File.read(template_file))
 
       server_aliases ||= ''
       server_aliases = server_aliases.gsub(',', ' ')
 
-
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
       v_host_config = template.result({
-        :server_name => server_name,
-        :server_aliases => server_aliases,
-        :path_to_ssl_files => APP_CONFIG['cert_dir'].to_s + server_name.gsub('*', 'wild') + '/'
-      })
+                                        :server_name => server_name,
+                                        :server_aliases => server_aliases,
+                                        :path_to_ssl_files => APP_CONFIG['cert_dir'].to_s + server_name.gsub('*',
+                                                                                                             'wild') + '/'
+                                      })
 
-      FileUtils.rm(v_host_file) if File.exist?(v_host_file)
+      FileUtils.rm_f(v_host_file)
 
       File.open(v_host_file, 'w') do |f|
         f.write(v_host_config)
       end
-
     end
 
     ##
@@ -124,16 +119,17 @@ module VirtualHostServiceWorker
 
       v_host_file = File.join(APP_CONFIG['v_host_config_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
       v_host_link = File.join(APP_CONFIG['v_host_link_dir'].split('/'), "#{server_name.gsub('*', 'wild')}.conf")
-      execute_command("ln -s #{v_host_file} #{v_host_link}") unless File.exists?(v_host_link)
+      execute_command("ln -s #{v_host_file} #{v_host_link}") unless File.exist?(v_host_link)
     end
 
     ##
     # Wirte the ssl key file to directory specified by the application config (config/application.yml).
     #
     def self.write_ssl_key(server_name, key)
-      key_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name.gsub('*', 'wild')}.key")
+      key_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'),
+                           "#{server_name.gsub('*', 'wild')}.key")
 
-      FileUtils.rm(key_file) if File.exist?(key_file)
+      FileUtils.rm_f(key_file)
       FileUtils.mkdir_p(File.dirname(key_file))
 
       File.open(key_file, 'w') do |f|
@@ -146,9 +142,10 @@ module VirtualHostServiceWorker
     # directory specified by the application config (config/application.yml).
     #
     def self.write_bundled_certificates(server_name, ca_cert, cert)
-      pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'), "#{server_name.gsub('*', 'wild')}.pem")
+      pem_file = File.join(APP_CONFIG['cert_dir'].split('/'), server_name.gsub('*', 'wild'),
+                           "#{server_name.gsub('*', 'wild')}.pem")
 
-      FileUtils.rm(pem_file) if File.exist?(pem_file)
+      FileUtils.rm_f(pem_file)
       FileUtils.mkdir_p(File.dirname(pem_file))
 
       File.open(pem_file, 'w') do |f|
@@ -172,6 +169,5 @@ module VirtualHostServiceWorker
       command = "#{APP_CONFIG['nginx_command']} -t -c #{APP_CONFIG['webserver_config']}"
       execute_command(command, 'Invalid nginx configuration')
     end
-
   end
 end

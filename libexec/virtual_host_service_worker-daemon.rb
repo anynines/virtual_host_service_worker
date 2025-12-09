@@ -1,23 +1,22 @@
 require 'json'
 
 DaemonKit::Application.running! do |config|
-
 end
 
 DaemonKit::AMQP.run do |connection|
-  connection.on_tcp_connection_loss do |connection, settings|
+  connection.on_tcp_connection_loss do |connection, _settings|
     puts "--> detected connection lost"
     Honeybadger.notify("--> detected connection lost")
     connection.reconnect(false, 10)
   end
 
-  connection.on_connection_interruption do |conn|
+  connection.on_connection_interruption do |_conn|
     puts "--> detected connection interruption"
     Honeybadger.notify("--> detected connection interruption")
     EventMachine.stop
   end
 
-  connection.on_error do |conn, connection_close|
+  connection.on_error do |_conn, connection_close|
     Honeybadger.notify("--> Handling a connection-level exception.")
     puts "--------"
     puts "Handling a connection-level exception."
@@ -29,7 +28,7 @@ DaemonKit::AMQP.run do |connection|
     EventMachine.stop
   end
 
-  channel  = AMQP::Channel.new(connection)
+  channel = AMQP::Channel.new(connection)
 
   channel.on_connection_interruption do |ch|
     puts "--> Channel #{ch.id} detected connection interruption"
@@ -57,4 +56,3 @@ DaemonKit::AMQP.run do |connection|
     VirtualHostServiceWorker::AmqpDispatcher.dispatch(JSON.parse(payload))
   end
 end
-

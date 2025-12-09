@@ -7,7 +7,7 @@ RSpec.describe VirtualHostServiceWorker::AmqpDispatcher do
     let(:exchange) { double('exchange') }
     let(:server_name) { 'test_name' }
 
-    let (:valid_payload) do
+    let(:valid_payload) do
       {
         'id' => 1,
         'ssl_certificate' =>
@@ -29,23 +29,23 @@ RSpec.describe VirtualHostServiceWorker::AmqpDispatcher do
       }
     end
 
-    before do 
+    before do
       stub_const('APP_CONFIG', {
-        'use_haproxy'         => true,
-        'haproxy_reload_max_instances' => 4,
-        'haproxy_command'     => File.expand_path('../../../support/haproxy_dummy', __FILE__),
-        'haproxy_reload'      => File.expand_path('../../../support/haproxy_dummy', __FILE__),
-        'haproxy_dir'         => File.expand_path('../../tmp/haproxy/', __FILE__),
-        'haproxy_config'      => File.expand_path('../../tmp/haproxy/config/haproxy.cfg', __FILE__),
-        'haproxy_cert_dir'    => File.expand_path('../../tmp/haproxy/certificates', __FILE__) + '/',
-        'haproxy_cert_list'   => File.expand_path('../../tmp/haproxy/haproxy-certificate-list', __FILE__),
-        'haproxy_ssl_ciphers' => "[alpn h2 ssl-min-ver TLSv1.2]",
-        'amqp' => { host: 'localhost' },
-        'amqp_channel' => 'test_channel'
-      })
+                   'use_haproxy' => true,
+                   'haproxy_reload_max_instances' => 4,
+                   'haproxy_command' => File.expand_path('../../../support/haproxy_dummy', __FILE__),
+                   'haproxy_reload' => File.expand_path('../../../support/haproxy_dummy', __FILE__),
+                   'haproxy_dir' => File.expand_path('../../tmp/haproxy/', __FILE__),
+                   'haproxy_config' => File.expand_path('../../tmp/haproxy/config/haproxy.cfg', __FILE__),
+                   'haproxy_cert_dir' => File.expand_path('../../tmp/haproxy/certificates', __FILE__) + '/',
+                   'haproxy_cert_list' => File.expand_path('../../tmp/haproxy/haproxy-certificate-list', __FILE__),
+                   'haproxy_ssl_ciphers' => "[alpn h2 ssl-min-ver TLSv1.2]",
+                   'amqp' => { host: 'localhost' },
+                   'amqp_channel' => 'test_channel'
+                 })
 
       allow(described_class).to receive(:server_name).and_return(server_name)
-      
+
       allow(AMQP).to receive(:start).and_yield(connection)
       allow(AMQP::Channel).to receive(:new).with(connection).and_return(channel)
       allow(channel).to receive(:fanout).with('test_channel', durable: true).and_return(exchange)
@@ -64,9 +64,9 @@ RSpec.describe VirtualHostServiceWorker::AmqpDispatcher do
       described_class.push_reload_to_amqp
       expected_payload = {
         action: 'reload',
-    }.to_json
+      }.to_json
 
-    expect(exchange).to have_received(:publish).with(expected_payload, persistent: true)
+      expect(exchange).to have_received(:publish).with(expected_payload, persistent: true)
     end
 
     it 'reqeus when haproxy instance limit reached' do
