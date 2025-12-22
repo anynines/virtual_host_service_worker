@@ -10,14 +10,16 @@ source 'https://rubygems.org'
 
 ruby '3.1.2'
 
-gem 'daemon-kit'
-gem 'safely'
 gem 'amqp'
+gem 'daemon-kit'
 gem 'erubis'
 gem 'honeybadger'
 gem 'psych', '< 4'
+gem 'safely'
 
 group :development, :test do
   gem 'rake'
   gem 'rspec'
+  gem 'rubocop-rails-omakase', require: false
+  gem 'rubocop-rspec'
 end
