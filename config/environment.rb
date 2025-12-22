@@ -1,7 +1,7 @@
 # Be sure to restart your daemon when you modify this file
 
 # Uncomment below to force your daemon into production mode
-#ENV['DAEMON_ENV'] ||= 'production'
+# ENV['DAEMON_ENV'] ||= 'production'
 
 # Boot up
 require File.join(File.dirname(__FILE__), 'boot')
@@ -10,7 +10,6 @@ require File.join(File.dirname(__FILE__), 'boot')
 Bundler.require :default, DaemonKit.env
 
 DaemonKit::Initializer.run do |config|
-
   # The name of the daemon as reported by process monitoring tools
   config.daemon_name = 'virtual_host_service_worker'
 

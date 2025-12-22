@@ -1,0 +1,26 @@
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby versions
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: false
+
+      - name: Install Rubocop
+        run: |
+          gem install rubocop-rails-omakase  -N
+          gem install rubocop-rspec  -N
+
+      - name: Run Rubocop
+        run: rubocop --lint
