@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe VirtualHostServiceWorker::HaproxyVHostWriter do
   before do
-    File.delete("#{APP_CONFIG['haproxy_cert_list']}")
-  rescue Errno::ENOENT => _e
+    FileUtils.rm_f("#{APP_CONFIG['haproxy_cert_list']}")
   end
+
   let(:haproxy_cert_list_content) do
     File.read("#{APP_CONFIG['haproxy_cert_list']}")
   end
@@ -21,7 +21,7 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
       'server_name' => 'eXample.de',
       'organization_guid' => 'a-valid-org-guid',
       'created_at' => '2013-07-03T07:52:05Z',
-      'updated_at' => '2013-07-03T07:52:05Z',
+      'updated_at' => '2013-07-03T07:52:05Z'
     }
   end
 
@@ -94,22 +94,19 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
   end
 
   describe '.setup_v_host' do
-
-
-
     context 'with a valid cert, ca cert and ssl key' do
-      it 'should create .pem file' do
+      it 'creates .pem file' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
         expect(File.exist?("#{APP_CONFIG['haproxy_cert_dir']}/example.de.pem")).to be true
       end
 
-      it 'should add cert.pem entry to cert-list' do
+      it 'adds cert.pem entry to cert-list' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
 
         expect(haproxy_cert_list_content).to include valid_payload_cert_list_entry
       end
 
-      it 'should not overwrite other cert-list entries' do
+      it 'does not overwrite other cert-list entries' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload2)
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
 
@@ -117,19 +114,19 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
         expect(haproxy_cert_list_content).to include valid_payload_with_wildcard_cert_list_entry
       end
 
-      it 'should reload the haproxy configuration' do
+      it 'reloads the haproxy configuration' do
         expect(VirtualHostServiceWorker::AmqpDispatcher).to receive(:push_reload_to_amqp).once
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
       end
     end
 
     context 'with a wildcard server name' do
-      it 'should replace the asterix in the certificates file name' do
+      it 'replaces the asterix in the certificates file name' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
         expect(File.exist?("#{APP_CONFIG['haproxy_cert_dir']}/wild.example.de.pem")).to be true
       end
 
-      it 'should add cert.pem entry to cert-list with wildcard' do
+      it 'adds cert.pem entry to cert-list with wildcard' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
 
         expect(haproxy_cert_list_content).to include 'virtual_host_service_worker/tmp/haproxy/certificates/wild.example.de.pem [alpn h2 ssl-min-ver TLSv1.2] *.example.de'
@@ -175,12 +172,12 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
         'virtual_host_service_worker/tmp/haproxy/certificates/example.de.pem [alpn h2 ssl-min-ver TLSv1.2] example.de *.example.de www.example.de'
       end
 
-      it 'should add cert.pem entry to cert-list with all aliases' do
+      it 'adds cert.pem entry to cert-list with all aliases' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
         expect(haproxy_cert_list_content).to include(valid_cert_file)
       end
 
-      it 'should add cert.pem entry to cert-list with all aliases separated with blank' do
+      it 'adds cert.pem entry to cert-list with all aliases separated with blank' do
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload_with_comma)
         expect(haproxy_cert_list_content).to include(valid_cert_file)
       end
@@ -189,36 +186,36 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
 
   describe '.delete_v_host' do
     context 'with a existing virtual host' do
-      before :each do
+      before do
         system("rm -f #{APP_CONFIG['haproxy_cert_list']}")
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload)
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload2)
         VirtualHostServiceWorker::HaproxyVHostWriter.setup_v_host(valid_payload_with_wildcard_server_name)
       end
 
-      it 'should delete the pem file' do
+      it 'deletes the pem file' do
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('eXample.de')
         expect(File.exist?("#{APP_CONFIG['haproxy_cert_dir']}example.de.pem")).to be false
       end
 
-      it 'should delete the pem file for wildcard' do
+      it 'deletes the pem file for wildcard' do
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('*.eXample.de')
         expect(File.exist?("#{APP_CONFIG['haproxy_cert_dir']}wild.example.de.pem")).to be false
       end
 
-      it 'should delete from the haproxy cert list' do
+      it 'deletes from the haproxy cert list' do
         expect(File.read(APP_CONFIG['haproxy_cert_list'])).to include(valid_payload2_cert_list_entry)
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('test.de')
-        expect(File.read(APP_CONFIG['haproxy_cert_list'])).to_not include(valid_payload2_cert_list_entry)
+        expect(File.read(APP_CONFIG['haproxy_cert_list'])).not_to include(valid_payload2_cert_list_entry)
       end
 
-      it 'should delete from the haproxy cert list for wildcard' do
+      it 'deletes from the haproxy cert list for wildcard' do
         expect(File.read(APP_CONFIG['haproxy_cert_list'])).to include('wild.example.de.pem')
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('*.eXample.de')
-        expect(File.read(APP_CONFIG['haproxy_cert_list'])).to_not include('wild.example.de.pem')
+        expect(File.read(APP_CONFIG['haproxy_cert_list'])).not_to include('wild.example.de.pem')
       end
 
-      it 'should reload the haproxy configuration' do
+      it 'reloads the haproxy configuration' do
         expect(VirtualHostServiceWorker::AmqpDispatcher).to receive(:push_reload_to_amqp).once
         allow(VirtualHostServiceWorker::HaproxyVHostWriter).to receive(:haproxy_instance_limit_reached?).and_return false
         VirtualHostServiceWorker::HaproxyVHostWriter.delete_v_host('eXample.de')
@@ -228,25 +225,21 @@ describe VirtualHostServiceWorker::HaproxyVHostWriter do
 
   describe '.config_valid' do
     context 'with a valid config file' do
-      before :each do
-        File.open(APP_CONFIG['haproxy_config'], 'w') do |f|
-          f.write(valid_haproxy_config)
-        end
+      before do
+        File.write(APP_CONFIG['haproxy_config'], valid_haproxy_config)
       end
 
-      it 'should be true' do
+      it 'is true' do
         expect(VirtualHostServiceWorker::HaproxyVHostWriter.config_valid?).to be true
       end
     end
 
     context 'with an invalid config file' do
-      before :each do
-        File.open(APP_CONFIG['haproxy_config'], 'w') do |f|
-          f.write(invalid_haproxy_config)
-        end
+      before do
+        File.write(APP_CONFIG['haproxy_config'], invalid_haproxy_config)
       end
 
-      it 'should raise Exception' do
+      it 'raises Exception' do
         APP_CONFIG['haproxy_config'] = File.expand_path('../tmp/haproxy/config/invalid_haproxy.cfg', __dir__)
         expect { VirtualHostServiceWorker::HaproxyVHostWriter.config_valid }.to raise_error
       end

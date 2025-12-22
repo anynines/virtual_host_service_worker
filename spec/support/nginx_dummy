@@ -1,5 +1,4 @@
 #! /bin/sh
-
 if [[ ${@} =~ "invalid_nginx.conf" ]]; then
   exit -1
 else
