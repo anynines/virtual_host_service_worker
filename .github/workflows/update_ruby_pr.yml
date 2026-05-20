@@ -1,0 +1,18 @@
+name: auto-update
+
+on:
+  workflow_dispatch:
+  schedule:
+    # daily 8am UTC
+    - cron: "0 8 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+jobs:
+  update:
+    uses: anynines/int-gitops/.github/workflows/update_ruby.yml@master
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
