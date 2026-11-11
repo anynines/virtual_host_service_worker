@@ -3,6 +3,9 @@
 # Uncomment below to force your daemon into production mode
 # ENV['DAEMON_ENV'] ||= 'production'
 
+# daemon-kit 0.3.3 still calls File.exists?, removed in Ruby 3.2.
+File.singleton_class.alias_method(:exists?, :exist?) unless File.respond_to?(:exists?)
+
 # Boot up
 require File.join(File.dirname(__FILE__), 'boot')
 
