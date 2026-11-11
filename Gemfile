@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # If you need to 'vendor your gems' for deploying your daemons, bundler is a
 # great option. Update this Gemfile with any additional dependencies and run
 # 'bundle install' to get them all installed. Daemon-kit's capistrano
@@ -8,7 +10,7 @@
 
 source 'https://rubygems.org'
 
-ruby '3.1.2'
+ruby '~> 3.4.12'
 
 gem 'amqp'
 gem 'daemon-kit'
@@ -18,7 +20,6 @@ gem 'psych', '< 4'
 gem 'safely'
 
 group :development, :test do
-  gem 'rake'
   gem 'rspec'
   gem 'rubocop-rails-omakase', require: false
   gem 'rubocop-rspec'
